@@ -1,10 +1,13 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { TokenService } from "./token/token.service";
 import { LoginAuthDto } from "./dto/login-auth.dto";
 import * as bcrypt from 'bcrypt';
 import { RegisterAuthDto } from "./dto/register-auth.dto";
 import getSafeUser from "src/common/utils/safe-user.util";
+import { RefreshTokenAuthDto } from "./dto/refresh-token-auth.dto";
+import * as jwt from 'jsonwebtoken';
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "src/common/constant/app.constant";
 
 @Injectable()
 export class AuthService {
@@ -47,5 +50,29 @@ export class AuthService {
         })
 
         return getSafeUser(newUser)
+    }
+
+    async refreshToken(refreshTokenAuthDto: RefreshTokenAuthDto) {
+        const { accessToken, refreshToken } = refreshTokenAuthDto
+        
+        let decodeRefreshToken: any;
+        let decodeAccessToken: any;
+
+        try {
+            decodeRefreshToken = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET as string);
+            decodeAccessToken = jwt.verify(accessToken, ACCESS_TOKEN_SECRET as string, {
+              ignoreExpiration: true,
+            });
+        } catch (error) {
+            throw new BadRequestException("Refresh token hợp lệ, vui lòng đăng ký tài khoản mới")
+        }
+
+        if (decodeRefreshToken.sub !== decodeAccessToken.sub) {
+            throw new UnauthorizedException("Token không hợp lệ");
+          }
+
+          const tokens = this.tokenService.createTokens(decodeAccessToken.sub);
+
+          return tokens
     }
 }
