@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model BookRooms {
+  id                               Int       @id
+  roomId                           Int
+  checkInDate                      DateTime  @db.DateTime(0)
+  checkOutDate                     DateTime  @db.DateTime(0)
+  guestCount                       Int
+  userId                           Int
+  deletedBy                        Int?
+  isDeleted                        Boolean   @default(false)
+  deletedAt                        DateTime? @db.Timestamp(0)
+  createdAt                        DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt                        DateTime  @default(now()) @db.Timestamp(0)
+  Users_BookRooms_deletedByToUsers Users?    @relation("BookRooms_deletedByToUsers", fields: [deletedBy], references: [id], map: "fk_bookroom_deletedBy")
+  Rooms                            Rooms     @relation(fields: [roomId], references: [id], onDelete: Cascade, map: "fk_bookroom_roomId")
+  Users_BookRooms_userIdToUsers    Users     @relation("BookRooms_userIdToUsers", fields: [userId], references: [id], map: "fk_bookroom_userId")
+
+  @@index([deletedBy], map: "fk_bookroom_deletedBy")
+  @@index([roomId], map: "idx_roomId_bookroom")
+  @@index([userId], map: "idx_userId")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model Comments {
+  id                                Int       @id @default(autoincrement())
+  roomId                            Int
+  commenterId                       Int
+  commentDate                       DateTime  @db.DateTime(0)
+  content                           String    @db.Text
+  rating                            Int
+  deletedBy                         Int?
+  isDeleted                         Boolean   @default(false)
+  deletedAt                         DateTime? @db.Timestamp(0)
+  createdAt                         DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt                         DateTime  @default(now()) @db.Timestamp(0)
+  Users_Comments_commenterIdToUsers Users     @relation("Comments_commenterIdToUsers", fields: [commenterId], references: [id], map: "fk_comment_commenterId")
+  Users_Comments_deletedByToUsers   Users?    @relation("Comments_deletedByToUsers", fields: [deletedBy], references: [id], map: "fk_comment_deletedBy")
+  Rooms                             Rooms     @relation(fields: [roomId], references: [id], onDelete: Cascade, map: "fk_comment_roomId")
+
+  @@index([deletedBy], map: "fk_comment_deletedBy")
+  @@index([commenterId], map: "idx_commenterId")
+  @@index([roomId], map: "idx_roomId")
+}
+
+model Locations {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(255)
+  province  String    @db.VarChar(255)
+  country   String    @db.VarChar(255)
+  image     String?   @db.VarChar(255)
+  deletedBy Int?
+  isDeleted Boolean   @default(false)
+  deletedAt DateTime? @db.Timestamp(0)
+  createdAt DateTime  @default(now()) @db.Timestamp(0)
+  updatedAt DateTime  @default(now()) @db.Timestamp(0)
+  Users     Users?    @relation(fields: [deletedBy], references: [id], map: "fk_location_deletedBy")
+  Rooms     Rooms[]
+
+  @@index([deletedBy], map: "fk_location_deletedBy")
+  @@index([province], map: "idx_province")
+}
+
+model Permissions {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(255)
+  endpoint       String           @db.VarChar(255)
+  method         String           @db.VarChar(10)
+  module         String           @db.VarChar(255)
+  deletedBy      Int?             @default(0)
+  isDeleted      Boolean          @default(false)
+  deletedAt      DateTime?        @db.Timestamp(0)
+  createdAt      DateTime         @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime         @default(now()) @db.Timestamp(0)
+  RolePermission RolePermission[]
+}
+
+model RolePermission {
+  id           Int         @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+  isActive     Boolean?    @default(true)
+  deletedBy    Int?        @default(0)
+  isDeleted    Boolean     @default(false)
+  deletedAt    DateTime?   @db.Timestamp(0)
+  createdAt    DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime    @default(now()) @db.Timestamp(0)
+  Roles        Roles       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RolePermission_ibfk_1")
+  Permissions  Permissions @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "RolePermission_ibfk_2")
+
+  @@unique([roleId, permissionId], map: "UK_Role_Permission")
+  @@index([permissionId], map: "permissionId")
+}
+
+model Roles {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique(map: "name") @db.VarChar(255)
+  description    String?          @db.VarChar(255)
+  isActive       Boolean?         @default(true)
+  deletedBy      Int?             @default(0)
+  isDeleted      Boolean          @default(false)
+  deletedAt      DateTime?        @db.Timestamp(0)
+  createdAt      DateTime         @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime         @default(now()) @db.Timestamp(0)
+  RolePermission RolePermission[]
+  Users          Users[]
+}
+
+model Rooms {
+  id             Int         @id @default(autoincrement())
+  name           String      @db.VarChar(255)
+  guestCount     Int
+  bedroomCount   Int
+  bedCount       Int
+  bathroomCount  Int
+  description    String?     @db.Text
+  price          Decimal     @db.Decimal(10, 2)
+  washingMachine Boolean     @default(false)
+  iron           Boolean     @default(false)
+  tv             Boolean     @default(false)
+  airConditioner Boolean     @default(false)
+  wifi           Boolean     @default(false)
+  kitchen        Boolean     @default(false)
+  parking        Boolean     @default(false)
+  pool           Boolean     @default(false)
+  ironingBoard   Boolean     @default(false)
+  locationId     Int
+  image          String?     @db.VarChar(255)
+  deletedBy      Int?
+  isDeleted      Boolean     @default(false)
+  deletedAt      DateTime?   @db.Timestamp(0)
+  createdAt      DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt      DateTime    @default(now()) @db.Timestamp(0)
+  BookRooms      BookRooms[]
+  Comments       Comments[]
+  Users          Users?      @relation(fields: [deletedBy], references: [id], map: "fk_room_deletedBy")
+  Locations      Locations   @relation(fields: [locationId], references: [id], map: "fk_room_locationId")
+
+  @@index([deletedBy], map: "fk_room_deletedBy")
+  @@index([locationId], map: "idx_locationId")
+}
+
+model Users {
+  id                                   Int         @id @default(autoincrement())
+  fullName                             String      @db.VarChar(255)
+  email                                String      @unique(map: "email") @db.VarChar(255)
+  password                             String?     @db.VarChar(255)
+  phone                                String?     @db.VarChar(20)
+  birthday                             DateTime?   @db.Date
+  avatar                               String?     @db.VarChar(255)
+  gender                               Boolean?
+  roleId                               Int         @default(2)
+  deletedBy                            Int?
+  isDeleted                            Boolean     @default(false)
+  deletedAt                            DateTime?   @db.Timestamp(0)
+  createdAt                            DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt                            DateTime    @default(now()) @db.Timestamp(0)
+  BookRooms_BookRooms_deletedByToUsers BookRooms[] @relation("BookRooms_deletedByToUsers")
+  BookRooms_BookRooms_userIdToUsers    BookRooms[] @relation("BookRooms_userIdToUsers")
+  Comments_Comments_commenterIdToUsers Comments[]  @relation("Comments_commenterIdToUsers")
+  Comments_Comments_deletedByToUsers   Comments[]  @relation("Comments_deletedByToUsers")
+  Locations                            Locations[]
+  Rooms                                Rooms[]
+  Users                                Users?      @relation("UsersToUsers", fields: [deletedBy], references: [id], map: "fk_deletedBy")
+  other_Users                          Users[]     @relation("UsersToUsers")
+  Roles                                Roles       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_roleId")
+
+  @@index([deletedBy], map: "fk_deletedBy")
+  @@index([roleId], map: "fk_roleId")
+  @@index([fullName], map: "idx_fullName")
+}

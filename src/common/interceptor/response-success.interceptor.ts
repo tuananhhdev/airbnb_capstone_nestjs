@@ -1,11 +1,11 @@
 import {
+    CallHandler,
+    ExecutionContext,
     Injectable,
     NestInterceptor,
-    ExecutionContext,
-    CallHandler,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class ResponseSuccessInterceptor implements NestInterceptor {
@@ -27,7 +27,8 @@ export class ResponseSuccessInterceptor implements NestInterceptor {
                     status: 'success',
                     code: statusCode,
                     data,
-                    doc: docUrl,
+                    docs: docUrl,
+                    timestamp: new Date().toISOString(),
                 };
             }),
         );
