@@ -7,11 +7,11 @@ export class TokenService {
    constructor(private readonly jwtService: JwtService) {}
 
   createTokens(userId: number) {
-    const accessToken = this.jwtService.sign({ userId: userId }, {
+    const accessToken = this.jwtService.sign({ sub: userId }, {
       secret: ACCESS_TOKEN_SECRET,
       expiresIn: ACCESS_TOKEN_EXPIRES,
     });
-    const refreshToken = this.jwtService.sign({ userId: userId }, {
+    const refreshToken = this.jwtService.sign({ sub: userId }, {
       secret: REFRESH_TOKEN_SECRET,
       expiresIn: REFRESH_TOKEN_EXPIRES,
     });

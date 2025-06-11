@@ -17,10 +17,13 @@ export class ProtectStrategy extends PassportStrategy(Strategy, `protect`) {
 
     async validate(decode: any) {
         console.log(`ProtectStrategy :: validate`);
-
+        const userId = Number(decode.sub); 
+        if (isNaN(userId)) {
+            throw new UnauthorizedException('ID trong token không hợp lệ');
+        }
         const user = await this.prismaService.users.findUnique({
             where: {
-                id: decode.userId,
+                id: userId,
             },
             include: {
                 Roles: true,
