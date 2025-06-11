@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Query, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { SkipPermission } from 'src/common/decorator/skip-permission.decorator';
 import { ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('User')
 @Controller('users')
@@ -28,6 +29,16 @@ class UserController {
     id: string
   ) {
     return await this.userService.findOne(id);
+  }
+
+  @Patch('/:id')
+  async updateById(
+    @Param('id')
+    id: string,
+    @Body()
+    body: UpdateUserDto
+  ) {
+    return await this.userService.updateById(id, body);
   }
 }
 

@@ -8,12 +8,14 @@ import getSafeUser from "src/common/utils/safe-user.util";
 import { RefreshTokenAuthDto } from "./dto/refresh-token-auth.dto";
 import * as jwt from 'jsonwebtoken';
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "src/common/constant/app.constant";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly prismaService: PrismaService,
-        private readonly tokenService: TokenService
+        private readonly tokenService: TokenService,
+        private readonly jwtService: JwtService
     ) { }
 
     async login(loginAuthDto: LoginAuthDto) {
@@ -54,14 +56,15 @@ export class AuthService {
 
     async refreshToken(refreshTokenAuthDto: RefreshTokenAuthDto) {
         const { accessToken, refreshToken } = refreshTokenAuthDto
-        
+
         let decodeRefreshToken: any;
         let decodeAccessToken: any;
 
         try {
-            decodeRefreshToken = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET as string);
-            decodeAccessToken = jwt.verify(accessToken, ACCESS_TOKEN_SECRET as string, {
-              ignoreExpiration: true,
+            decodeRefreshToken = this.jwtService.verify(refreshToken, { secret: REFRESH_TOKEN_SECRET });
+            decodeAccessToken = this.jwtService.verify(accessToken, {
+                secret: ACCESS_TOKEN_SECRET,
+                ignoreExpiration: true,
             });
         } catch (error) {
             throw new BadRequestException("Refresh token hợp lệ, vui lòng đăng ký tài khoản mới")
@@ -69,10 +72,10 @@ export class AuthService {
 
         if (decodeRefreshToken.sub !== decodeAccessToken.sub) {
             throw new UnauthorizedException("Token không hợp lệ");
-          }
+        }
 
-          const tokens = this.tokenService.createTokens(decodeAccessToken.sub);
+        const tokens = this.tokenService.createTokens(decodeAccessToken.sub);
 
-          return tokens
+        return tokens
     }
 }

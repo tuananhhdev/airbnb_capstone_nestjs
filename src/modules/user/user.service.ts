@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import getSafeUser from 'src/common/utils/safe-user.util';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -43,9 +44,18 @@ export class UserService {
     }
 
     async findOne(id: string) {
-        const user = await this.prismaService.users.findUnique({ where: { id : Number(id) }})
+        const user = await this.prismaService.users.findUnique({ where: { id: Number(id) } })
         if (!user) throw new BadRequestException(`Không tìm thấy user`);
         return getSafeUser(user)
 
+    }
+
+    async updateById(id: string, body: UpdateUserDto) {
+        const updatedUser = await this.prismaService.users.update({
+            where: { id: Number(id) },
+            data: body
+        })
+
+        return getSafeUser(updatedUser)
     }
 }
