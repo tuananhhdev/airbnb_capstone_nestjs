@@ -4,7 +4,7 @@ import { Strategy } from 'passport-custom';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 @Injectable()
-export class PermissionStrategy extends PassportStrategy(Strategy, `permission`) {
+export class PermissionStrategy extends PassportStrategy(Strategy, 'permission') {
     constructor(private readonly prismaService: PrismaService) {
         super();
     }
@@ -15,9 +15,7 @@ export class PermissionStrategy extends PassportStrategy(Strategy, `permission`)
         const roleId = user.roleId;
 
         // nếu là admin thì cho pass qua
-        if (roleId === 1) {
-            return true;
-        }
+        if (roleId === 1) return true;
 
         const endpoint = req?._parsedUrl?.pathname;
         const method = req?.method
@@ -25,19 +23,14 @@ export class PermissionStrategy extends PassportStrategy(Strategy, `permission`)
         const isPermission = await this.prismaService.rolePermission.findFirst({
             where: {
                 roleId: roleId,
-                Roles: {
-                    isActive: true,
-                },
-                Permissions: {
-                    endpoint: endpoint,
-                    method: method,
-                },
+                Roles: { isActive: true },
+                Permissions: { endpoint: endpoint, method: method, isDeleted: false },
                 isActive: true,
             },
         });
 
         if (isPermission === null) {
-            throw new BadRequestException(`Không có quyện truy cập với endpoint này`);
+            throw new BadRequestException(`Không có quyền truy cập với endpoint này`);
         }
 
         return true;

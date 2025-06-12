@@ -1,34 +1,35 @@
-import { Body, Controller, Get, Param, Patch, Query, Req } from '@nestjs/common';
-import { UserService } from './user.service';
-import { SkipPermission } from 'src/common/decorator/skip-permission.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
+import { SkipPermission } from 'src/common/decorator/skip-permission.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UploadAvatarDto } from './dto/upload-avatar.dto';
+import { UserService } from './user.service';
 
 @ApiTags('User')
 @Controller('users')
 class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @SkipPermission()
   @Get('/')
-  async findAll(
-    @Req()
-    req: Request,
+  @SkipPermission()
+  findAll(
     @Query('page')
     page: string,
     @Query('pageSize')
     pageSize: string
   ) {
-    return await this.userService.findAll(page, pageSize);
+    return this.userService.findAll(page, pageSize);
   }
 
   @Get('/:id')
-  async findOne(
+  @SkipPermission()
+  findOne(
     @Param('id')
     id: string
   ) {
-    return await this.userService.findOne(id);
+    return this.userService.findOne(id);
   }
 
   @Patch('/:id')
@@ -40,6 +41,31 @@ class UserController {
   ) {
     return await this.userService.updateById(id, body);
   }
+
+  @Delete('/:id')
+  softDelete(
+    @Param('id')
+    id: string
+  ) {
+    return this.userService.softDelete(Number(id));
+  }
+
+  @Post("upload-avatar")
+  @UseInterceptors(FileInterceptor('avatar'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Tải ảnh đại diện',
+    type: UploadAvatarDto
+  })
+  uploadAvatar(
+    @UploadedFile()
+    file: Express.Multer.File,
+    @Req()
+    req: Request
+  ) {
+    return this.userService.uploadAvatar(file, req.user)
+  }
+
 }
 
 export default UserController

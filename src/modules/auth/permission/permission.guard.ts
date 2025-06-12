@@ -33,12 +33,12 @@ export class PermissionGuard extends AuthGuard('permission') {
         return super.canActivate(context);
     }
 
-    handleRequest(err, user, info) {
-        console.log({ err, user, info });
-
+    handleRequest(err: any, user: any, info: { message: any; }, context: ExecutionContext) {
+        console.log(`PermissionGuard :: handleRequest`);
         if (err || !user) {
             throw err || new BadRequestException(info.message);
         }
-        return user;
+        return context.switchToHttp().getRequest().user;
     }
+
 }

@@ -5,7 +5,7 @@ import { ACCESS_TOKEN_SECRET } from 'src/common/constant/app.constant';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 @Injectable()
-export class ProtectStrategy extends PassportStrategy(Strategy, `protect`) {
+export class ProtectStrategy extends PassportStrategy(Strategy, 'protect') {
     constructor(private readonly prismaService: PrismaService) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -16,14 +16,12 @@ export class ProtectStrategy extends PassportStrategy(Strategy, `protect`) {
     }
 
     async validate(decode: any) {
-        console.log(`ProtectStrategy :: validate`);
-        const userId = Number(decode.sub); 
-        if (isNaN(userId)) {
-            throw new UnauthorizedException('ID trong token không hợp lệ');
-        }
+        console.log(`ProtectStrategy :: validate - Decode:`, decode);
+       
         const user = await this.prismaService.users.findUnique({
             where: {
-                id: userId,
+                id: decode.sub,
+                isDeleted: false,
             },
             include: {
                 Roles: true,

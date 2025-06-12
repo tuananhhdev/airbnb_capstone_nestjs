@@ -9,23 +9,23 @@ import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
 @ApiTags("Auth")
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Public()
   @Post('login')
-  async login(@Body() loginAuthDto: LoginAuthDto) {
-    return await this.authService.login(loginAuthDto);
+  login(@Body() loginAuthDto: LoginAuthDto) {
+    return this.authService.login(loginAuthDto);
   }
 
   @Public()
   @Post('register')
-  async register(@Body() registerAuthDto: RegisterAuthDto) {
-    return await this.authService.register(registerAuthDto);
+  register(@Body() registerAuthDto: RegisterAuthDto) {
+    return this.authService.register(registerAuthDto);
   }
 
-  @Public()
+
   @Post('refresh-token')
-  async refreshToken(@Body() refreshTokenAuthDto: RefreshTokenAuthDto) {
-    return await this.authService.refreshToken(refreshTokenAuthDto);
+  refreshToken(@Body() refreshTokenAuthDto: RefreshTokenAuthDto) {
+    return this.authService.refreshToken(refreshTokenAuthDto);
   }
 }

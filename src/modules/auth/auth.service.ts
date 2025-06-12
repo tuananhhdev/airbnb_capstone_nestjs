@@ -22,7 +22,7 @@ export class AuthService {
 
         const { email, password } = loginAuthDto
 
-        const userExist = await this.prismaService.users.findUnique({ where: { email } });
+        const userExist = await this.prismaService.users.findUnique({ where: { email: email } });
         if (!userExist) throw new BadRequestException("Tài khoản chưa tồn tại, vui lòng đăng ký")
         if (!userExist.password) throw new BadRequestException("Tài khoản không hợp lệ, vui lòng kiểm tra lại hoặc đăng ký tài khoản mới")
 
@@ -37,7 +37,7 @@ export class AuthService {
     async register(registerAuthDto: RegisterAuthDto) {
         const { fullName, email, password } = registerAuthDto
 
-        const userExist = await this.prismaService.users.findUnique({ where: { email } });
+        const userExist = await this.prismaService.users.findUnique({ where: { email: email } });
         if (userExist) throw new BadRequestException("Tài khoản đã tồn tại, vui lòng đăng ký tài khoản khác")
 
         const salt = bcrypt.genSaltSync(10);
@@ -45,8 +45,8 @@ export class AuthService {
 
         const newUser = await this.prismaService.users.create({
             data: {
-                fullName,
-                email,
+                fullName: fullName,
+                email: email,
                 password: hashPasword
             },
         })

@@ -2,8 +2,7 @@ import {
     ExecutionContext,
     ForbiddenException,
     Injectable,
-    UnauthorizedException,
-    UseGuards,
+    UnauthorizedException
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JsonWebTokenError, TokenExpiredError } from '@nestjs/jwt';
