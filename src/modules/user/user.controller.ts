@@ -17,7 +17,6 @@ class UserController {
 
   // lấy danh sách tất cả người dùng 
   @Get('/')
-  // @Public()
   @SuccessMessage('Lấy danh sách người dùng thành công')
   findAll(
     @Query('page')

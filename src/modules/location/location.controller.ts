@@ -18,4 +18,17 @@ export class LocationController {
   ) {
     return this.locationService.findAll(page, pageSize);
   }
+
+  @Get('phan-trang-tim-kiem')
+  @SuccessMessage('Lấy danh sách vị trí thành công')
+  findWithPaginationAndSearch(
+    @Query('page')
+    page: string,
+    @Query('pageSize')
+    pageSize: string,
+    @Query('search')
+    search: string
+  ) {
+    return this.locationService.findWWithPaginationAndSearch(page, pageSize, search);
+  }
 }

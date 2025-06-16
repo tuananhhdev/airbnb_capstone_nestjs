@@ -81,7 +81,7 @@ export class UserService {
                     createdAt: 'desc'
                 },
             }),
-            this.prismaService.users.count({ where }),
+            this.prismaService.users.count({ where: where }),
         ]);
 
         const safeUsers = getSafeData(users)
