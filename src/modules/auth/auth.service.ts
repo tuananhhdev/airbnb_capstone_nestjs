@@ -1,14 +1,14 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
-import { TokenService } from "./token/token.service";
-import { LoginAuthDto } from "./dto/login-auth.dto";
-import * as bcrypt from 'bcrypt';
-import { RegisterAuthDto } from "./dto/register-auth.dto";
-import { RefreshTokenAuthDto } from "./dto/refresh-token-auth.dto";
-import * as jwt from 'jsonwebtoken';
-import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "src/common/constant/app.constant";
 import { JwtService } from "@nestjs/jwt";
-import { getSafeUserSelect } from "src/common/utils/safe-user.util";
+import * as bcrypt from 'bcrypt';
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "src/common/constant/app.constant";
+import { PrismaService } from "../prisma/prisma.service";
+import { LoginAuthDto } from "./dto/login-auth.dto";
+import { RefreshTokenAuthDto } from "./dto/refresh-token-auth.dto";
+import { RegisterAuthDto } from "./dto/register-auth.dto";
+import { TokenService } from "./token/token.service";
+import { Users } from "@prisma/client";
+import { getSafeData } from "src/common/utils/safe-data.util";
 
 @Injectable()
 export class AuthService {
@@ -49,10 +49,11 @@ export class AuthService {
                 email: email,
                 password: hashPasword
             },
-            select: getSafeUserSelect()
         })
 
-        return newUser
+        const safeUser = getSafeData(newUser as unknown as Users[])[0]
+
+        return safeUser
     }
 
     async refreshToken(refreshTokenAuthDto: RefreshTokenAuthDto) {

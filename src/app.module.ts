@@ -7,9 +7,10 @@ import { PrismaService } from './modules/prisma/prisma.service';
 import { ProtectStrategy } from './modules/auth/protect/protect.strategy';
 import { PermissionStrategy } from './modules/auth/permission/permission.strategy';
 import { UserModule } from './modules/user/user.module';
+import { LocationModule } from './modules/location/location.module';
 
 @Module({
-  imports: [AuthModule, TokenModule, UserModule],
+  imports: [AuthModule, TokenModule, UserModule, LocationModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, ProtectStrategy, PermissionStrategy],
 })

@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME } from 'src/common/constant/app.constant';
-import { getSafeUserSelect } from 'src/common/utils/safe-user.util';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt'
 import * as sharp from 'sharp';
+import { getSafeData } from 'src/common/utils/safe-data.util';
 @Injectable()
 export class UserService {
     constructor(private readonly prismaService: PrismaService) { }
@@ -29,15 +29,16 @@ export class UserService {
                 orderBy: {
                     createdAt: 'desc'
                 },
-                select: getSafeUserSelect()
             }),
             this.prismaService.users.count({ where })
         ]);
 
+        const safeUsers = getSafeData(users)
+
         const totalPages = Math.ceil(totalItems / pageSize);
 
         return {
-            items: users,
+            items: safeUsers,
             pagination: {
                 currentPage: page,
                 itemsPerPage: pageSize,
@@ -48,9 +49,12 @@ export class UserService {
     }
 
     async findOne(id: string) {
-        const user = await this.prismaService.users.findUnique({ where: { id: Number(id) }, select: getSafeUserSelect() })
+        const user = await this.prismaService.users.findUnique({ where: { id: Number(id) } })
         if (!user) throw new BadRequestException(`Không tìm thấy người dùng với ID này`);
-        return user
+
+        const safeUser = getSafeData([user])[0]
+
+        return safeUser
     }
 
     async findWithPaginationAndSearch(page: string | number, pageSize: string | number, search: string) {
@@ -76,15 +80,16 @@ export class UserService {
                 orderBy: {
                     createdAt: 'desc'
                 },
-                select: getSafeUserSelect()
             }),
             this.prismaService.users.count({ where }),
         ]);
 
+        const safeUsers = getSafeData(users)
+
         const totalPages = Math.ceil(totalItems / pageSize);
 
         return {
-            items: users,
+            items: safeUsers,
             pagination: {
                 currentPage: page,
                 itemsPerPage: pageSize,
@@ -128,15 +133,16 @@ export class UserService {
                 take: pageSize,
                 skip,
                 orderBy: { createdAt: 'desc' },
-                select: getSafeUserSelect(),
             }),
             this.prismaService.users.count({ where }),
         ]);
 
+        const safeUser = getSafeData(users)
+
         const totalPages = Math.ceil(totalItems / pageSize);
 
         return {
-            items: users,
+            items: safeUser,
             pagination: {
                 currentPage: page,
                 itemsPerPage: pageSize,
@@ -166,10 +172,11 @@ export class UserService {
                 gender: gender,
                 password: hashPasword
             },
-            select: getSafeUserSelect()
         })
 
-        return newUser
+        const safeUser = getSafeData([newUser])[0]
+
+        return safeUser
     }
 
     async updateById(id: string, body: UpdateUserDto) {
@@ -178,10 +185,11 @@ export class UserService {
         const updatedUser = await this.prismaService.users.update({
             where: { id: Number(id) },
             data: { ...body, updatedAt: new Date() },
-            select: getSafeUserSelect()
         })
 
-        return updatedUser
+        const safeUser = getSafeData([updatedUser])[0]
+
+        return safeUser
     }
 
     async updateSelf(user: any, body: UpdateUserDto) {
@@ -189,9 +197,11 @@ export class UserService {
         const updateUser = await this.prismaService.users.update({
             where: { id: userId },
             data: { ...body, updatedAt: new Date() },
-            select: getSafeUserSelect()
         })
-        return updateUser
+
+        const safeUser = getSafeData([updateUser])[0]
+
+        return safeUser
     }
 
     async updateAvatar(user: any, file: Express.Multer.File) {
@@ -232,14 +242,15 @@ export class UserService {
         const updateAvatar = await this.prismaService.users.update({
             where: { id: userId },
             data: { avatar: uploadResult.public_id, updatedAt: new Date() },
-            select: getSafeUserSelect()
         })
+
+        const safeUser = getSafeData([updateAvatar])[0]
 
         return {
             publicId: uploadResult.public_id,
             imgUrl: uploadResult.secure_url,
             user: {
-                ...updateAvatar,
+                ...safeUser,
                 avatarUrl: uploadResult.secure_url
             }
         }
