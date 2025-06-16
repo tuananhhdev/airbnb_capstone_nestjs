@@ -10,7 +10,7 @@ export class PermissionStrategy extends PassportStrategy(Strategy, 'permission')
     }
 
     async validate(req: any) {
-        console.log(`PermissionStrategy :: validate`);
+        // console.log(`PermissionStrategy :: validate`);
         const user = req.user;
         const roleId = user.roleId;
 

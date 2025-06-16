@@ -1,27 +1,60 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { LoggingInterceptor } from './common/interceptor/logging.interceptor';
-import { ResponseSuccessInterceptor } from './common/interceptor/response-success.interceptor';
+import { PORT } from './common/constant/app.constant';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ProtectGuard } from './modules/auth/protect/protect.guard';
 import { PermissionGuard } from './modules/auth/permission/permission.guard';
-import { PORT } from './common/constant/app.constant';
+import { LoggingInterceptor } from './common/interceptor/logging.interceptor';
+import { ResponseSuccessInterceptor } from './common/interceptor/response-success.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // GLOBAL
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true
-    })
-  )
-  const reflector = app.get(Reflector)
+      forbidNonWhitelisted: true,
+    }),
+  );
+  const reflector = app.get(Reflector);
   app.useGlobalGuards(new ProtectGuard(reflector));
   app.useGlobalGuards(new PermissionGuard(reflector));
-  app.useGlobalInterceptors(new LoggingInterceptor())
-  app.useGlobalInterceptors(new ResponseSuccessInterceptor())
+  app.useGlobalInterceptors(new LoggingInterceptor());
+  app.useGlobalInterceptors(new ResponseSuccessInterceptor(reflector));
   app.setGlobalPrefix('api');
-  await app.listen(PORT ?? 3000);
+
+  const config = new DocumentBuilder()
+    .setTitle('Airbnb Capstone API')
+    .setDescription('API documentation for Airbnb Capstone project')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config, {
+    ignoreGlobalPrefix: false
+  });
+
+  // Loại bỏ route /api nếu xuất hiện
+  if (document.paths['/api']) {
+    delete document.paths['/api'];
+  }
+
+  SwaggerModule.setup('/api-docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      security: [{ 'access-token': [] }],
+      securityDefinitions: {
+        'access-token': {
+          type: 'apiKey',
+          name: 'Authorization',
+          in: 'header',
+        },
+      },
+    },
+  });
+
+  await app.listen(PORT ?? 3069);
 }
 bootstrap();

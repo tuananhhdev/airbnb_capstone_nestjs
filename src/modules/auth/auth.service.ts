@@ -4,11 +4,11 @@ import { TokenService } from "./token/token.service";
 import { LoginAuthDto } from "./dto/login-auth.dto";
 import * as bcrypt from 'bcrypt';
 import { RegisterAuthDto } from "./dto/register-auth.dto";
-import getSafeUser from "src/common/utils/safe-user.util";
 import { RefreshTokenAuthDto } from "./dto/refresh-token-auth.dto";
 import * as jwt from 'jsonwebtoken';
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "src/common/constant/app.constant";
 import { JwtService } from "@nestjs/jwt";
+import { getSafeUserSelect } from "src/common/utils/safe-user.util";
 
 @Injectable()
 export class AuthService {
@@ -49,9 +49,10 @@ export class AuthService {
                 email: email,
                 password: hashPasword
             },
+            select: getSafeUserSelect()
         })
 
-        return getSafeUser(newUser)
+        return newUser
     }
 
     async refreshToken(refreshTokenAuthDto: RefreshTokenAuthDto) {

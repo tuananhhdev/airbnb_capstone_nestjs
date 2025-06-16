@@ -16,7 +16,7 @@ export class ProtectStrategy extends PassportStrategy(Strategy, 'protect') {
     }
 
     async validate(decode: any) {
-        console.log(`ProtectStrategy :: validate - Decode:`, decode);
+        // console.log(`ProtectStrategy :: validate - Decode:`, decode);
        
         const user = await this.prismaService.users.findUnique({
             where: {
@@ -29,7 +29,7 @@ export class ProtectStrategy extends PassportStrategy(Strategy, 'protect') {
         });
 
         if (!user) {
-            throw new UnauthorizedException(`Không tìm thấy user`);
+            throw new UnauthorizedException(`Không tìm thấy người dùng`);
         }
 
         return user;

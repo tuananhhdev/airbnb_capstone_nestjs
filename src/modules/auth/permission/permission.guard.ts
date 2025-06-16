@@ -15,7 +15,7 @@ export class PermissionGuard extends AuthGuard('permission') {
     }
 
     canActivate(context: ExecutionContext) {
-        console.log(`PermissiontGuard :: canActivate`);
+        // console.log(`PermissiontGuard :: canActivate`);
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
             context.getHandler(),
             context.getClass(),
@@ -33,12 +33,12 @@ export class PermissionGuard extends AuthGuard('permission') {
         return super.canActivate(context);
     }
 
-    handleRequest(err: any, user: any, info: { message: any; }, context: ExecutionContext) {
-        console.log(`PermissionGuard :: handleRequest`);
+    handleRequest(err, user, info) {
+        // console.log(`PermissionGuard :: handleRequest`, { err, user, info });
         if (err || !user) {
             throw err || new BadRequestException(info.message);
         }
-        return context.switchToHttp().getRequest().user;
+        return user;
     }
 
 }

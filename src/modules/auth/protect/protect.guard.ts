@@ -16,7 +16,7 @@ export class ProtectGuard extends AuthGuard('protect') {
     }
 
     canActivate(context: ExecutionContext) {
-        console.log(`ProtectGuard :: canActivate`);
+        // console.log(`ProtectGuard :: canActivate`);
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
             context.getHandler(),
             context.getClass(),
@@ -24,6 +24,8 @@ export class ProtectGuard extends AuthGuard('protect') {
         if (isPublic) {
             return true;
         }
+        const request = context.switchToHttp().getRequest();
+        console.log('Request headers in canActivate:', request.headers);
         return super.canActivate(context);
     }
 
