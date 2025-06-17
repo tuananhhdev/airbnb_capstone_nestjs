@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { Public } from 'src/common/decorator/public.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
 import { SuccessMessage } from 'src/common/decorator/success-mesage.decorator';
@@ -15,6 +15,7 @@ export class AuthController {
   @Public()
   @Post('login')
   @SuccessMessage('Đăng nhập tài khoản thành công')
+  @ApiOperation({ summary: 'Đăng nhập tài khoản' })
   login(@Body() loginAuthDto: LoginAuthDto) {
     return this.authService.login(loginAuthDto);
   }
@@ -22,6 +23,7 @@ export class AuthController {
   @Public()
   @Post('register')
   @SuccessMessage('Đăng ký tài khoản thành công')
+  @ApiOperation({ summary: 'Đăng ký tài khoản' })
   register(@Body() registerAuthDto: RegisterAuthDto) {
     return this.authService.register(registerAuthDto);
   }
@@ -29,6 +31,8 @@ export class AuthController {
 
   @Post('refresh-token')
   @SuccessMessage('Làm mới token thành công')
+  @ApiOperation({ summary: 'Làm mới token' })
+  @ApiBearerAuth()
   refreshToken(@Body() refreshTokenAuthDto: RefreshTokenAuthDto) {
     return this.authService.refreshToken(refreshTokenAuthDto);
   }

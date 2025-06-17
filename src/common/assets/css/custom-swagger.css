@@ -1,0 +1,352 @@
+/* CSS Variables for theming */
+:root {
+    --primary-color: #ff5a5f;
+    --primary-dark: #e74c3c;
+    --secondary-color: #00a699;
+    --secondary-dark: #00827a;
+    --accent-color: #484848;
+    --success-color: #49cc90;
+    --warning-color: #fca130;
+    --danger-color: #f93e3e;
+    --info-color: #61affe;
+    
+    /* Light theme */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    --border-color: #dee2e6;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+    --shadow-heavy: rgba(0, 0, 0, 0.3);
+    
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bg-gradient-alt: linear-gradient(135deg, #ff5a5f 0%, #ff8a80 100%);
+    --auth-button-bg: #ff6b6b;
+    --auth-button-hover: #e55b5b;
+    --black-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); /* Gradient đen */
+  }
+  
+  /* Dark theme */
+  [data-theme="dark"] {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --bg-tertiary: #404040;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+    --text-muted: #808080;
+    --border-color: #404040;
+    --shadow-light: rgba(255, 255, 255, 0.1);
+    --shadow-medium: rgba(255, 255, 255, 0.15);
+    --shadow-heavy: rgba(0, 0, 0, 0.5);
+    
+    --bg-gradient: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    --bg-gradient-alt: linear-gradient(135deg, #ff5a5f 0%, #c53030 100%);
+    --auth-button-bg: #ff8787;
+    --auth-button-hover: #ff6b6b;
+    --black-gradient: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 100%); /* Gradient đen đậm hơn cho dark mode */
+  }
+  
+  /* Dark Mode Toggle Button */
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    background: var(--bg-gradient);
+    border: none;
+    border-radius: 50px;
+    width: 60px;
+    height: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px var(--shadow-medium);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+  }
+  
+  .theme-toggle::before {
+    content: '☀️';
+    font-size: 16px;
+    transition: opacity 0.3s ease;
+  }
+  
+  .theme-toggle::after {
+    content: '🌙';
+    font-size: 16px;
+    position: absolute;
+    right: 5px;
+    transition: opacity 0.3s ease;
+  }
+  
+  [data-theme="light"] .theme-toggle::before {
+    opacity: 1;
+  }
+  
+  [data-theme="light"] .theme-toggle::after {
+    opacity: 0.3;
+  }
+  
+  [data-theme="dark"] .theme-toggle::before {
+    opacity: 0.3;
+  }
+  
+  [data-theme="dark"] .theme-toggle::after {
+    opacity: 1;
+  }
+  
+  .theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 20px var(--shadow-medium);
+  }
+  
+  /* Enhanced Tab Styling with Margin Bottom */
+  .swagger-ui .opblock-tag {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 8px 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .swagger-ui .opblock-tag:hover {
+    background: var(--bg-tertiary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-light);
+  }
+  
+  .swagger-ui .opblock-tag-section {
+    margin-bottom: 0;
+  }
+  
+  .swagger-ui .opblock-tag .opblock-tag-section__header {
+    background: none;
+    padding: 0;
+  }
+  
+  .swagger-ui .opblock {
+    border-radius: 8px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .swagger-ui .opblock:hover {
+    background: var(--bg-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px var(--shadow-light);
+  }
+  
+  .swagger-ui .opblock .opblock-summary {
+    border-radius: 8px;
+    padding: 12px;
+    background: var(--bg-primary);
+    transition: all 0.3s ease;
+  }
+  
+  .swagger-ui .opblock .opblock-summary:hover {
+    background: var(--bg-tertiary);
+  }
+  
+  .swagger-ui .opblock .opblock-summary-method {
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .swagger-ui .opblock-get .opblock-summary-method {
+    background: #61affe;
+    color: white;
+  }
+  
+  .swagger-ui .opblock-post .opblock-summary-method {
+    background: #49cc90;
+    color: white;
+  }
+  
+  .swagger-ui .opblock-put .opblock-summary-method {
+    background: #fca130;
+    color: white;
+  }
+  
+  .swagger-ui .opblock-delete .opblock-summary-method {
+    background: #f93e3e;
+    color: white;
+  }
+  
+  .swagger-ui .opblock .opblock-summary-description {
+    color: var(--text-primary);
+    font-size: 14px;
+    padding-left: 10px;
+  }
+  
+  /* Remove focus outline for API summaries */
+  .swagger-ui .opblock .opblock-summary:focus,
+  .swagger-ui .opblock-tag:focus,
+  .swagger-ui .opblock-tag-section__header:focus {
+    outline: none;
+  }
+  
+  /* Improved Authorization Modal */
+  .swagger-ui .auth-container {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+  }
+  
+  .swagger-ui .auth-container .auth-btn-wrapper {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  .swagger-ui .btn.authorize {
+    background: var(--auth-button-bg);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px var(--shadow-light);
+  }
+  
+  .swagger-ui .btn.authorize:hover {
+    background: var(--auth-button-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px var(--shadow-medium);
+  }
+  
+  .swagger-ui .btn.authorize:active {
+    transform: translateY(0);
+  }
+  
+  .swagger-ui .auth-container .btn.close {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+  }
+  
+  .swagger-ui .auth-container .btn.close:hover {
+    background: var(--bg-tertiary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px var(--shadow-light);
+  }
+  
+  .swagger-ui .auth-container input {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 8px;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 15px;
+  }
+  
+  /* Base Swagger UI Overrides */
+  .swagger-ui {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+  }
+  
+  .swagger-ui .info {
+    background: var(--black-gradient);
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.8s ease-out;
+    box-shadow: 0 15px 35px var(--shadow-medium);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .swagger-ui .info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  
+  .swagger-ui .info .title {
+    color: white;
+    font-size: 3rem;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px var(--shadow-heavy);
+    animation: slideInLeft 1s ease-out;
+    margin-bottom: 1rem;
+    letter-spacing: -1px;
+  }
+  
+  .swagger-ui .info .description {
+    color: white;
+    font-size: 1.2rem;
+    animation: slideInRight 1s ease-out 0.3s both;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  
+  .swagger-ui .topbar {
+    background: var(--black-gradient);
+    border-bottom: 3px solid var(--primary-color);
+    animation: slideInDown 0.6s ease-out;
+    box-shadow: 0 2px 10px var(--shadow-light);
+  }
+  
+  .swagger-ui .topbar .download-url-wrapper {
+    display: none;
+  }
+  
+  /* Other animations and media queries */
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  @keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @media (max-width: 768px) {
+    .swagger-ui .info {
+      padding: 2rem 1rem;
+      margin: 1rem 0;
+    }
+    .theme-toggle {
+      top: 10px;
+      right: 10px;
+      width: 50px;
+      height: 25px;
+    }
+  }

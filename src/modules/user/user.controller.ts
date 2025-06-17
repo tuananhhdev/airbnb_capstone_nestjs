@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { SkipPermission } from 'src/common/decorator/skip-permission.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -17,6 +17,7 @@ class UserController {
 
   // lấy danh sách tất cả người dùng 
   @Get('/')
+  @ApiBearerAuth()
   @SuccessMessage('Lấy danh sách người dùng thành công')
   findAll(
     @Query('page')
