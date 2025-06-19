@@ -25,6 +25,7 @@ export class LocationController {
 
   @Get('phan-trang-tim-kiem')
   @SuccessMessage('Lấy danh sách vị trí thành công')
+  @ApiOperation({ summary: 'Lấy danh sách tất cả vị trí với phần trang & tìm kiếm ' })
   findWithPaginationAndSearch(
     @Query('page')
     page: string,
@@ -40,8 +41,6 @@ export class LocationController {
   @ApiBearerAuth()
   @SuccessMessage('Tạo mới vị trí thành công')
   @ApiOperation({ summary: 'Tạo mới vị trí' })
-  @ApiResponse({ status: 201, description: 'Tạo mới vị trí thành công' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -50,17 +49,14 @@ export class LocationController {
         name: { type: 'string' },
         province: { type: 'string' },
         country: { type: 'string' },
-        imageLocation: { type: 'string', format: 'binary' }, 
+        imageLocation: { type: 'string', format: 'binary' },
       },
     },
   })
   @UseInterceptors(
     FileInterceptor('imageLocation', {
-      fileFilter: (req, file, callback) => {
-        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-          return callback(new Error('Only image files are allowed!'), false);
-        }
-        callback(null, true);
+      limits: {
+        fileSize: 1 * 1024 * 1024, 
       },
     }),
   )
@@ -73,8 +69,59 @@ export class LocationController {
 
   @Get(':id')
   @SuccessMessage('Tìm vị trí theo theo ID thành công')
+  @ApiOperation({ summary: 'Tìm vị trí theo theo ID' })
   findOne(@Param('id') id: string) {
     return this.locationService.findOne(id);
+  }
+
+  @Patch(':id')
+  @SuccessMessage('Cập nhật vị trí thành công')
+  @ApiOperation({ summary: 'Cập nhật vị trí' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateLocationDto })
+  @ApiBearerAuth()
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        province: { type: 'string' },
+        country: { type: 'string' },
+        imageLocation: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('imageLocation', {
+      limits: {
+        fileSize: 1 * 1024 * 1024, 
+      },
+    }),
+  )
+  update(
+    @Param('id') id: string,
+    @Body() updateLocationDto: UpdateLocationDto,
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    return this.locationService.updateLocation(id, updateLocationDto, file);
+  }
+
+  @Delete(':id')
+  @ApiBearerAuth()
+  @SuccessMessage('Xóa vị trí thành công')
+  @ApiOperation({ summary: 'Xóa vị trí (soft delete)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Xóa vị trí thành công',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Xóa vị trí thành công' }
+      }
+    }
+  })
+  softDelete(@Param('id') id: string) {
+    return this.locationService.softDeleteLocation(id);
   }
 
 }

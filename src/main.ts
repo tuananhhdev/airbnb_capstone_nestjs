@@ -58,11 +58,11 @@ async function bootstrap() {
       defaultModelsExpandDepth: 1,
       defaultModelExpandDepth: 1,
       displayOperationId: false,
-      tryItOutEnabled: true,
+      // tryItOutEnabled: true,
     },
-    customSiteTitle: '🏠 Airbnb Capstone API - Professional Documentation',
-    customCss,
-    customJs,
+    customSiteTitle: 'Airbnb Capstone API - Professional Documentation',
+    // customCss,
+    // customJs,
   });
 
   await app.listen(PORT ?? 3069);
