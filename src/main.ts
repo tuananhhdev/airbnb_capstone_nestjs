@@ -58,10 +58,9 @@ async function bootstrap() {
       defaultModelsExpandDepth: 1,
       defaultModelExpandDepth: 1,
       displayOperationId: false,
-      // tryItOutEnabled: true,
     },
     customSiteTitle: 'Airbnb Capstone API - Professional Documentation',
-    // customCss,
+    customCss,
     // customJs,
   });
 

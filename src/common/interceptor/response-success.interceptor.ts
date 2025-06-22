@@ -11,7 +11,7 @@ import { SUCCESS_MESSAGE_KEY } from '../decorator/success-mesage.decorator';
 
 @Injectable()
 export class ResponseSuccessInterceptor implements NestInterceptor {
-    constructor(private readonly reflector: Reflector) {}
+    constructor(private readonly reflector: Reflector) { }
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const req = context.switchToHttp().getRequest();

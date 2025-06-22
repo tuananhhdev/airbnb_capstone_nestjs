@@ -61,6 +61,8 @@ model Locations {
   deletedAt DateTime? @db.Timestamp(0)
   createdAt DateTime  @default(now()) @db.Timestamp(0)
   updatedAt DateTime  @default(now()) @db.Timestamp(0)
+  latitude  Decimal?  @db.Decimal(10, 8)
+  longitude Decimal?  @db.Decimal(11, 8)
   Users     Users?    @relation(fields: [deletedBy], references: [id], map: "fk_location_deletedBy")
   Rooms     Rooms[]
 
@@ -114,37 +116,40 @@ model Roles {
 }
 
 model Rooms {
-  id             Int         @id @default(autoincrement())
-  name           String      @db.VarChar(255)
-  guestCount     Int
-  bedroomCount   Int
-  bedCount       Int
-  bathroomCount  Int
-  description    String?     @db.Text
-  price          Decimal     @db.Decimal(10, 2)
-  washingMachine Boolean     @default(false)
-  iron           Boolean     @default(false)
-  tv             Boolean     @default(false)
-  airConditioner Boolean     @default(false)
-  wifi           Boolean     @default(false)
-  kitchen        Boolean     @default(false)
-  parking        Boolean     @default(false)
-  pool           Boolean     @default(false)
-  ironingBoard   Boolean     @default(false)
-  locationId     Int
-  image          String?     @db.VarChar(255)
-  deletedBy      Int?
-  isDeleted      Boolean     @default(false)
-  deletedAt      DateTime?   @db.Timestamp(0)
-  createdAt      DateTime    @default(now()) @db.Timestamp(0)
-  updatedAt      DateTime    @default(now()) @db.Timestamp(0)
-  BookRooms      BookRooms[]
-  Comments       Comments[]
-  Users          Users?      @relation(fields: [deletedBy], references: [id], map: "fk_room_deletedBy")
-  Locations      Locations   @relation(fields: [locationId], references: [id], map: "fk_room_locationId")
+  id                        Int         @id @default(autoincrement())
+  name                      String      @db.VarChar(255)
+  guestCount                Int
+  bedroomCount              Int
+  bedCount                  Int
+  bathroomCount             Int
+  description               String?     @db.Text
+  price                     Decimal     @db.Decimal(10, 2)
+  washingMachine            Boolean     @default(false)
+  iron                      Boolean     @default(false)
+  tv                        Boolean     @default(false)
+  airConditioner            Boolean     @default(false)
+  wifi                      Boolean     @default(false)
+  kitchen                   Boolean     @default(false)
+  parking                   Boolean     @default(false)
+  pool                      Boolean     @default(false)
+  ironingBoard              Boolean     @default(false)
+  locationId                Int
+  deletedBy                 Int?
+  isDeleted                 Boolean     @default(false)
+  deletedAt                 DateTime?   @db.Timestamp(0)
+  createdAt                 DateTime    @default(now()) @db.Timestamp(0)
+  updatedAt                 DateTime    @default(now()) @db.Timestamp(0)
+  image                     Json?
+  hostId                    Int
+  BookRooms                 BookRooms[]
+  Comments                  Comments[]
+  Users                     Users?      @relation(fields: [deletedBy], references: [id], map: "fk_room_deletedBy")
+  Users_Rooms_hostIdToUsers Users       @relation("Rooms_hostIdToUsers", fields: [hostId], references: [id], map: "fk_room_hostId")
+  Locations                 Locations   @relation(fields: [locationId], references: [id], map: "fk_room_locationId")
 
   @@index([deletedBy], map: "fk_room_deletedBy")
   @@index([locationId], map: "idx_locationId")
+  @@index([hostId], map: "fk_room_hostId")
 }
 
 model Users {
@@ -168,6 +173,7 @@ model Users {
   Comments_Comments_deletedByToUsers   Comments[]  @relation("Comments_deletedByToUsers")
   Locations                            Locations[]
   Rooms                                Rooms[]
+  Rooms_Rooms_hostIdToUsers            Rooms[]     @relation("Rooms_hostIdToUsers")
   Users                                Users?      @relation("UsersToUsers", fields: [deletedBy], references: [id], map: "fk_deletedBy")
   other_Users                          Users[]     @relation("UsersToUsers")
   Roles                                Roles       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_roleId")

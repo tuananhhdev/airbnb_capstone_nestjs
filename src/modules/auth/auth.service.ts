@@ -51,7 +51,7 @@ export class AuthService {
             },
         })
 
-        const safeUser = getSafeData(newUser as unknown as Users[])[0]
+        const safeUser = getSafeData([newUser])[0]
 
         return safeUser
     }

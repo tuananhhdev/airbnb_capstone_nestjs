@@ -1,11 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UploadApiResponse } from 'cloudinary';
-import { uploadImageBuffer } from 'src/common/utils/cloudinary.util';
+import { destroyCloudinaryImage, uploadImageBuffer } from 'src/common/utils/cloudinary.util';
 import { getSafeData } from 'src/common/utils/safe-data.util';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
-import cloudinary from 'src/common/config/cloudinary.config';
 
 @Injectable()
 export class LocationService {
@@ -100,12 +99,18 @@ export class LocationService {
   async createLocation(body: CreateLocationDto, file: Express.Multer.File) {
     if (!file) throw new BadRequestException('Thiếu file tải lên');
 
-    const uploadResult: UploadApiResponse = await uploadImageBuffer('locations', file.buffer);
+    const altText = `Hình ảnh của ${body.name}`
+
+    const uploadResult: UploadApiResponse = await uploadImageBuffer('locations', file.buffer, {
+      context: { alt: altText }
+    });
+
+    const publicId = uploadResult.public_id
 
     const newLocation = await this.prismaService.locations.create({
       data: {
         ...body,
-        image: uploadResult.public_id
+        image: publicId
       }
     })
 
@@ -113,8 +118,9 @@ export class LocationService {
     return {
       location: safeLocation,
       image: {
-        publicId: uploadResult.public_id,
+        publicId: publicId,
         imgUrl: uploadResult.secure_url,
+        altText: altText,
         filename: file.originalname,
       }
 
@@ -126,28 +132,34 @@ export class LocationService {
     if (!location) throw new BadRequestException('không tìm thấy vị trí với ID này');
 
     let uploadResult: UploadApiResponse | undefined;
+    let altText = `Hình ảnh của ${location.name}`
+
     if (file) {
-      // Xóa ảnh cũ trên Cloudinary nếu có
       if (location.image) {
         try {
-          await this.destroyCloudinaryImage(location.image);
+          await destroyCloudinaryImage(location.image);
         } catch (error) {
           console.error('Lỗi khi xóa ảnh cũ:', error);
-          // Không throw error để không làm gián đoạn quá trình update
         }
       }
 
-      // Upload ảnh mới
-      uploadResult = await uploadImageBuffer('locations', file.buffer);
+      uploadResult = await uploadImageBuffer('locations', file.buffer, {
+        context: { alt: altText }
+      });
     }
+
+    const publicId = uploadResult?.public_id
+
+
+    const updateData = {
+      ...body,
+      ...(uploadResult ? { image: publicId } : {}),
+      updatedAt: new Date(),
+    };
 
     const updatedLocation = await this.prismaService.locations.update({
       where: { id: Number(id) },
-      data: {
-        ...body,
-        ...(uploadResult ? { image: uploadResult.public_id } : {}),
-        updatedAt: new Date(),
-      },
+      data: updateData,
     });
 
     const safeLocation = getSafeData([updatedLocation])[0];
@@ -156,17 +168,18 @@ export class LocationService {
       location: safeLocation,
       image: uploadResult
         ? {
-          publicId: uploadResult.public_id,
+          publicId: publicId,
           imgUrl: uploadResult.secure_url,
+          altText: altText,
           filename: file?.originalname,
+          width: uploadResult.width,
+          height: uploadResult.height,
         }
         : null,
     };
   }
 
-  /**
-   * Xóa mềm location và xóa ảnh trên Cloudinary
-   */
+
   async softDeleteLocation(id: string) {
     const location = await this.prismaService.locations.findUnique({
       where: { id: Number(id), isDeleted: false }
@@ -176,17 +189,14 @@ export class LocationService {
       throw new BadRequestException('Không tìm thấy vị trí với ID này');
     }
 
-    // Xóa ảnh trên Cloudinary nếu có
     if (location.image) {
       try {
-        await this.destroyCloudinaryImage(location.image);
+        await destroyCloudinaryImage(location.image);
       } catch (error) {
         console.error('Lỗi khi xóa ảnh location:', error);
-        // Không throw error để không làm gián đoạn quá trình xóa
       }
     }
 
-    // Soft delete location
     await this.prismaService.locations.update({
       where: { id: Number(id) },
       data: {
@@ -198,17 +208,7 @@ export class LocationService {
     return { message: 'Xóa vị trí thành công' };
   }
 
-  /**
-   * Helper function để xóa ảnh trên Cloudinary
-   */
-  private async destroyCloudinaryImage(publicId: string): Promise<void> {
-    try {
-      await cloudinary.uploader.destroy(publicId);
-      console.log(`Đã xóa ảnh thành công: ${publicId}`);
-    } catch (error) {
-      console.error(`Lỗi khi xóa ảnh ${publicId}:`, error);
-      throw error;
-    }
-  }
+
+
 
 }
