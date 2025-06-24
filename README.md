@@ -1,98 +1,240 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Dự án Airbnb Capstone
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<div align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/Airbnb_Logo_B%C3%A9lo.svg" alt="Airbnb Logo" width="180"/>
+  
+  <p align="center">
+    <strong>Nền tảng cho thuê nhà nghỉ dưỡng cấp doanh nghiệp được xây dựng với công nghệ hiện đại</strong>
+  </p>
+  
+  <p align="center">
+    <img src="https://img.shields.io/badge/NestJS-E0234E?style=flat&logo=nestjs&logoColor=white" alt="NestJS"/>
+    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white" alt="TypeScript"/>
+    <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white" alt="MySQL"/>
+    <img src="https://img.shields.io/badge/Prisma-2D3748?style=flat&logo=prisma&logoColor=white" alt="Prisma"/>
+    <img src="https://img.shields.io/badge/JWT-000000?style=flat&logo=jsonwebtokens&logoColor=white" alt="JWT"/>
+  </p>
+</div>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## Tổng quan
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Hệ thống cho thuê nhà nghỉ dưỡng đầy đủ tính năng hỗ trợ ba vai trò người dùng: **Quản trị viên**, **Chủ nhà**, và **Khách thuê**. Được xây dựng với kiến trúc có thể mở rộng và thực hành phát triển hiện đại.
 
-## Project setup
+### Tính năng chính
 
-```bash
-$ yarn install
-```
+🔐 **Xác thực & Phân quyền** - JWT với kiểm soát truy cập dựa trên vai trò  
+🏠 **Quản lý bất động sản** - Thao tác CRUD hoàn chỉnh với tải lên hình ảnh  
+📍 **Quản lý vị trí** - Dữ liệu địa lý với khả năng tìm kiếm  
+📅 **Hệ thống đặt phòng** - Kiểm tra tình trạng thời gian thực với ngăn chặn xung đột  
+💬 **Hệ thống đánh giá** - Chức năng xếp hạng và bình luận  
+👤 **Hồ sơ người dùng** - Quản lý hồ sơ với tải lên avatar  
+🔍 **Tìm kiếm nâng cao** - Lọc, phân trang và sắp xếp  
+🗂️ **Xóa mềm** - Bảo tồn dữ liệu với tùy chọn khôi phục
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ yarn run start
+## Công nghệ sử dụng
 
-# watch mode
-$ yarn run start:dev
+| Danh mục | Công nghệ |
+|----------|-----------|
+| **Backend** | NestJS, TypeScript, Node.js |
+| **Cơ sở dữ liệu** | MySQL, Prisma ORM |
+| **Xác thực** | JWT, Passport.js, bcrypt |
+| **Lưu trữ file** | Cloudinary |
+| **Validation** | class-validator, class-transformer |
+| **Tài liệu** | Swagger/OpenAPI |
+| **Phát triển** | ESLint, Prettier, Nodemon |
 
-# production mode
-$ yarn run start:prod
-```
+---
 
-## Run tests
+## Bắt đầu nhanh
 
-```bash
-# unit tests
-$ yarn run test
+### Yêu cầu hệ thống
+- Node.js 18+
+- MySQL 8.0+
+- npm hoặc yarn
 
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Cài đặt
 
 ```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
+# Clone repository
+git clone <repository-url>
+cd airbnb_capstone
+
+# Cài đặt dependencies
+npm install
+
+# Thiết lập môi trường
+cp .env.example .env
+# Cấu hình file .env của bạn
+
+# Thiết lập cơ sở dữ liệu
+npx prisma generate
+npx prisma migrate dev
+npx prisma db seed
+
+# Chạy server phát triển
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Cấu hình môi trường
 
-## Resources
+```env
+DATABASE_URL="mysql://username:password@localhost:3306/airbnb_db"
 
-Check out a few resources that may come in handy when working with NestJS:
+ACCESS_TOKEN_SECRET="your-access-token-secret"
+ACCESS_TOKEN_EXPIRES="15m"
+REFRESH_TOKEN_SECRET="your-refresh-token-secret"
+REFRESH_TOKEN_EXPIRES="7d"
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
 
-## Support
+PORT=3000
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## Tài liệu API
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Tài liệu API tương tác
+Truy cập `/api-docs` sau khi khởi động server để xem tài liệu Swagger đầy đủ.
 
-## License
+### Endpoints chính
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+#### Xác thực
+```http
+POST   /api/auth/login              # Đăng nhập
+POST   /api/auth/register           # Đăng ký tài khoản
+POST   /api/auth/refresh-token      # Làm mới token
+```
+
+#### Quản lý người dùng
+```http
+GET    /api/users                   # Danh sách người dùng (Admin)
+GET    /api/users/pagination-search # Tìm kiếm người dùng (Admin)
+PATCH  /api/users/me                # Cập nhật hồ sơ
+POST   /api/users/upload-avatar     # Tải lên avatar
+```
+
+#### Quản lý bất động sản
+```http
+GET    /api/rooms                   # Danh sách bất động sản
+GET    /api/rooms/pagination-search # Tìm kiếm bất động sản
+POST   /api/rooms                   # Tạo bất động sản (Chủ nhà)
+PUT    /api/rooms/:id               # Cập nhật bất động sản (Chủ nhà/Admin)
+DELETE /api/rooms/:id               # Xóa bất động sản (Chủ nhà/Admin)
+```
+
+#### Hệ thống đặt phòng
+```http
+GET    /api/book-room               # Danh sách đặt phòng
+POST   /api/book-room               # Tạo đặt phòng
+PUT    /api/book-room/:id           # Cập nhật đặt phòng
+DELETE /api/book-room/:id           # Hủy đặt phòng
+POST   /api/book-room/confirm/:id   # Xác nhận đặt phòng (Chủ nhà)
+```
+
+#### Đánh giá & Bình luận
+```http
+GET    /api/comment/by-room/:roomId # Lấy đánh giá phòng
+POST   /api/comment                # Tạo đánh giá
+PUT    /api/comment/:id             # Cập nhật đánh giá
+DELETE /api/comment/:id             # Xóa đánh giá
+```
+
+### Định dạng phản hồi
+
+```json
+{
+  "statusCode": 200,
+  "message": "Thành công",
+  "data": { /* dữ liệu phản hồi */ },
+  "pagination": { /* thông tin phân trang (nếu có) */ },
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+```
+
+---
+
+## Kiến trúc
+
+### Cấu trúc dự án
+```
+src/
+├── common/              # Tiện ích & decorators chung
+├── modules/
+│   ├── auth/           # Xác thực & phân quyền
+│   ├── user/           # Quản lý người dùng
+│   ├── room/           # Quản lý bất động sản
+│   ├── location/       # Dịch vụ vị trí
+│   ├── book-room/      # Hệ thống đặt phòng
+│   ├── comment/        # Hệ thống đánh giá
+│   └── prisma/         # Dịch vụ cơ sở dữ liệu
+└── main.ts             # Điểm vào ứng dụng
+```
+
+### Vai trò người dùng & Quyền hạn
+
+| Vai trò | ID | Quyền hạn |
+|---------|----|-----------| 
+| **Admin** | 1 | Truy cập toàn hệ thống, quản lý người dùng |
+| **User** | 2 | Đặt phòng, đánh giá, quản lý hồ sơ |
+| **Host** | 3 | Quản lý bất động sản, xác nhận đặt phòng |
+
+---
+
+## Kiểm thử
+
+### Tài khoản test
+```json
+{
+  "admin": { "email": "admin@airbnb.com", "password": "admin123" },
+  "host": { "email": "host@airbnb.com", "password": "host123" },
+  "user": { "email": "user@airbnb.com", "password": "user123" }
+}
+```
+
+### Postman Collection
+Import `postman/Airbnb_Capstone.postman_collection.json` để kiểm thử API toàn diện.
+
+---
+
+## Scripts phát triển
+
+```bash
+npm run start:dev      # Server phát triển với hot reload
+npm run build          # Build production
+npm run start:prod     # Server production
+npm run lint           # Kiểm tra code
+npm run format         # Định dạng code
+```
+
+---
+
+## Đóng góp
+
+1. Fork repository
+2. Tạo feature branch (`git checkout -b feature/TinhNangMoi`)
+3. Commit thay đổi (`git commit -m 'Thêm TinhNangMoi'`)
+4. Push lên branch (`git push origin feature/TinhNangMoi`)
+5. Mở Pull Request
+
+---
+
+## Giấy phép
+
+Dự án này được cấp phép theo Giấy phép MIT - xem file [LICENSE](LICENSE) để biết chi tiết.
+
+---
+
+<div align="center">
+  <p><strong>Được xây dựng với ❤️ sử dụng NestJS</strong></p>
+  <p>
+    <a href="mailto:tuananh@gmail.com">Liên hệ Developer</a> •
+    <a href="https://github.com/tuananhhdev">GitHub Profile</a>
+  </p>
+</div>

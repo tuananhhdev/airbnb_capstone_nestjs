@@ -1,0 +1,1562 @@
+{
+	"info": {
+		"_postman_id": "b2cc15ef-539f-47f5-a861-f309213ff4c2",
+		"name": "AIRBNB_CAPSTONE_NESTJS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40117577",
+		"_collection_link": "https://www.postman.com/tuananhhdev/workspace/airbnb-capstone-express/collection/40117577-b2cc15ef-539f-47f5-a861-f309213ff4c2?action=share&source=collection_link&creator=40117577"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\": \"Tuấn Anh\",\r\n    \"email\": \"tuananh@gmail.com\",\r\n    \"password\": \"Tuananh120?\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}auth/register",
+							"host": [
+								"{{domain}}auth"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();\r",
+									"console.log(res);\r",
+									"\r",
+									"// Ensure res.data exists before accessing tokens\r",
+									"if (res.data && res.data.accessToken && res.data.refreshToken) {\r",
+									"    pm.globals.set(\"accessToken\", res.data.accessToken);\r",
+									"    pm.globals.set(\"refreshToken\", res.data.refreshToken);\r",
+									"    console.log(\"✅ accessToken & refreshToken set\");\r",
+									"} else {\r",
+									"    console.warn(\"❌ Missing res.data or tokens in response\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"tuananh@gmail.com\",\r\n    \"password\": \"Tuananh120?\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}auth/login",
+							"host": [
+								"{{domain}}auth"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const res = pm.response.json();\r",
+									"console.log(res);\r",
+									"\r",
+									"// Ensure res.data exists before accessing tokens\r",
+									"if (res.data && res.data.accessToken && res.data.refreshToken) {\r",
+									"    pm.globals.set(\"accessToken\", res.data.accessToken);\r",
+									"    pm.globals.set(\"refreshToken\", res.data.refreshToken);\r",
+									"    console.log(\"✅ accessToken & refreshToken set\");\r",
+									"} else {\r",
+									"    console.warn(\"❌ Missing res.data or tokens in response\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"accessToken\": \"{{accessToken}}\",\r\n    \"refreshToken\": \"{{refreshToken}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}auth/refresh-token",
+							"host": [
+								"{{domain}}auth"
+							],
+							"path": [
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Find All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}users",
+							"host": [
+								"{{domain}}users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find One",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}users/2",
+							"host": [
+								"{{domain}}users"
+							],
+							"path": [
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find With Pagination & Search",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}users/pagination-search",
+							"host": [
+								"{{domain}}users"
+							],
+							"path": [
+								"pagination-search"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "anh",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find With Search Name",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}users/search?q=minh",
+							"host": [
+								"{{domain}}users"
+							],
+							"path": [
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "minh"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Avatar",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Downloads/1f1e6e98815b97801c538081c7701fd7.webp"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{domain}}users/upload-avatar",
+							"host": [
+								"{{domain}}users"
+							],
+							"path": [
+								"upload-avatar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User ( by Admin )",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\": \"Kim Kim\",\r\n    \"email\": \"kimkim@gmail.com\",\r\n    \"phone\": \"01234567\",\r\n    \"gender\": false,\r\n    \"password\": \"Kimkim123?\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}users/",
+							"host": [
+								"{{domain}}users"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Info ( by Admin )",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phone\": \"0332146124\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}users/5",
+							"host": [
+								"{{domain}}users"
+							],
+							"path": [
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Info ( by User )",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Downloads/02070de2-154a-424a-928f-ac2f9c7742a7.avif"
+								},
+								{
+									"key": "gender",
+									"value": "false",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{domain}}users/me",
+							"host": [
+								"{{domain}}users"
+							],
+							"path": [
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete ( by Admin )",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}users/10",
+							"host": [
+								"{{domain}}users"
+							],
+							"path": [
+								"10"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Locations",
+			"item": [
+				{
+					"name": "Find All",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"tuananh@gmail.com\",\r\n    \"password\": \"Tuananh120?\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}locations?page=1&pageSize=7",
+							"host": [
+								"{{domain}}locations"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find With Pagination & Search",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"tuananh@gmail.com\",\r\n    \"password\": \"Tuananh120?\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}locations/pagination-search?page=1&pageSize=5&search=noi",
+							"host": [
+								"{{domain}}locations"
+							],
+							"path": [
+								"pagination-search"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								},
+								{
+									"key": "search",
+									"value": "noi"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find One",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Pictures/360_F_643625328_VPkhbt47OV328Nzqexsg2zjVu7tTgdXx.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{domain}}locations/3",
+							"host": [
+								"{{domain}}locations"
+							],
+							"path": [
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Location",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imageLocation",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Downloads/download.jfif"
+								},
+								{
+									"key": "name",
+									"value": "Quận 1",
+									"type": "text"
+								},
+								{
+									"key": "province",
+									"value": "Thành Phố Hồ Chí Minh",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "Việt Nam",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{domain}}locations",
+							"host": [
+								"{{domain}}locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imageLocation",
+									"type": "file",
+									"src": "/C:/Users/Administrator/Pictures/z3885033134429_377489e5548524fdcfa84ee4d35be8f0-5.jpg",
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "Quận 2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{domain}}locations/8",
+							"host": [
+								"{{domain}}locations"
+							],
+							"path": [
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}locations/6",
+							"host": [
+								"{{domain}}locations"
+							],
+							"path": [
+								"6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rooms",
+			"item": [
+				{
+					"name": "Find All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}rooms/",
+							"host": [
+								"{{domain}}rooms"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find With Pagination & Search",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}rooms/pagination-search?page=1&pageSize=1",
+							"host": [
+								"{{domain}}rooms"
+							],
+							"path": [
+								"pagination-search"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Rooms By Location",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "{{domain}}rooms/by-location?locationId=2",
+							"host": [
+								"{{domain}}rooms"
+							],
+							"path": [
+								"by-location"
+							],
+							"query": [
+								{
+									"key": "locationId",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find One",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}rooms/9",
+							"host": [
+								"{{domain}}rooms"
+							],
+							"path": [
+								"9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Room",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imageRoom",
+									"type": "file",
+									"src": [
+										"/C:/Users/Administrator/Pictures/39 Uchi - Căn Hộ Trung Tâm Thành Phố Đà Lạt/6eba26b2-786a-4d29-bdf1-368bcca4fb74.avif",
+										"/C:/Users/Administrator/Pictures/39 Uchi - Căn Hộ Trung Tâm Thành Phố Đà Lạt/786a2c11-13ad-4b27-8b51-33398035ce2b.avif",
+										"/C:/Users/Administrator/Pictures/39 Uchi - Căn Hộ Trung Tâm Thành Phố Đà Lạt/60384e8c-9b4c-4098-9edb-3742eed7d07e.avif",
+										"/C:/Users/Administrator/Pictures/39 Uchi - Căn Hộ Trung Tâm Thành Phố Đà Lạt/bb7a4a7c-9d86-4f51-8d71-f062bad4fb54.avif",
+										"/C:/Users/Administrator/Pictures/39 Uchi - Căn Hộ Trung Tâm Thành Phố Đà Lạt/ce20ab22-bcbe-4f85-a825-abaf74f1694a.avif"
+									]
+								},
+								{
+									"key": "name",
+									"value": "39 Uchi - Căn Hộ Trung Tâm Thành Phố Đà Lạt",
+									"type": "text"
+								},
+								{
+									"key": "guestCount",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "bedroomCount",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "bedCount",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "bathroomCount",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Căn hộ sang trọng thoáng mát và view biển tuyệt đẹp",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "1500000",
+									"type": "text"
+								},
+								{
+									"key": "locationId",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "washingMachine",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "iron",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "tv",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "airConditioner",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "wifi",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "kitchen",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "parking",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "pool",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "ironingBoard",
+									"value": "true",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{domain}}rooms",
+							"host": [
+								"{{domain}}rooms"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Room",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imageRoom",
+									"type": "file",
+									"src": [
+										"/C:/Users/Administrator/Downloads/afcab8de93cac375f8be2a0d1b20337a.jpeg",
+										"/C:/Users/Administrator/Downloads/95337266.jpg",
+										"/C:/Users/Administrator/Downloads/tour-du-lich-da-nang-1.jpg"
+									],
+									"disabled": true
+								},
+								{
+									"key": "name",
+									"value": "Phòng Deluxe 2 giường Hướng biển (Deluxe Twin Ocean View)",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "guestCount",
+									"value": "4",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "bedroomCount",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "bedCount",
+									"value": "2",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "bathroomCount",
+									"value": "3",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "description",
+									"value": "Căn hộ sang trọng thoáng mát và view biển tuyệt đẹp",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "price",
+									"value": "1500000",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "locationId",
+									"value": "1",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "washingMachine",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "iron",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "tv",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "airConditioner",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "wifi",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "kitchen",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "parking",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "pool",
+									"value": "false",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "ironingBoard",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{domain}}rooms/15",
+							"host": [
+								"{{domain}}rooms"
+							],
+							"path": [
+								"15"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete Room",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}rooms/12",
+							"host": [
+								"{{domain}}rooms"
+							],
+							"path": [
+								"12"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Book Room",
+			"item": [
+				{
+					"name": "Find All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}book-room",
+							"host": [
+								"{{domain}}book-room"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find One",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}book-room/2",
+							"host": [
+								"{{domain}}book-room"
+							],
+							"path": [
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking by User ( Admin )",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}book-room/by-user/5",
+							"host": [
+								"{{domain}}book-room"
+							],
+							"path": [
+								"by-user",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Booking By Me",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}book-room/my-bookings",
+							"host": [
+								"{{domain}}book-room"
+							],
+							"path": [
+								"my-bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Book Room",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"guestCount\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}book-room/2",
+							"host": [
+								"{{domain}}book-room"
+							],
+							"path": [
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Book Room",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}book-room/confirm/3",
+							"host": [
+								"{{domain}}book-room"
+							],
+							"path": [
+								"confirm",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Book Room",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roomId\": 14,\r\n    \"startDate\": \"2025-06-24\",\r\n    \"endDate\": \"2025-07-01\",\r\n    \"guestCount\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}book-room",
+							"host": [
+								"{{domain}}book-room"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}book-room/2",
+							"host": [
+								"{{domain}}book-room"
+							],
+							"path": [
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comment",
+			"item": [
+				{
+					"name": "Find All",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}comments/",
+							"host": [
+								"{{domain}}comments"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find One",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}comments/7",
+							"host": [
+								"{{domain}}comments"
+							],
+							"path": [
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Comment By Room",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}comments/by-room/14",
+							"host": [
+								"{{domain}}comments"
+							],
+							"path": [
+								"by-room",
+								"14"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roomId\": 14,\r\n    \"content\": \"Phòng xịn thật á, view cực đẹp khỏi chê?\",\r\n    \"rating\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}comments",
+							"host": [
+								"{{domain}}comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Comment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rating\":5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}comments/7",
+							"host": [
+								"{{domain}}comments"
+							],
+							"path": [
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}comments/3",
+							"host": [
+								"{{domain}}comments"
+							],
+							"path": [
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
