@@ -32,6 +32,7 @@
     "class-validator": "^0.14.1",
     "cloudinary": "^2.6.0",
     "dotenv": "^16.5.0",
+    "p-retry": "^6.2.1",
     "passport": "^0.7.0",
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",

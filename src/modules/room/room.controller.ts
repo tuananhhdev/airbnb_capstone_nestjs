@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UploadedFiles, UseInterceptors, Patch, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Query, UploadedFiles, UseInterceptors, Patch, Req, BadRequestException } from '@nestjs/common';
 import { RoomService } from './room.service';
 import { SuccessMessage } from 'src/common/decorator/success-mesage.decorator';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -6,20 +6,24 @@ import { FindRoomsDto } from './dto/find-room.dto';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { SkipPermission } from 'src/common/decorator/skip-permission.decorator';
+
 import { Public } from 'src/common/decorator/public.decorator';
+import { SkipPermission } from 'src/common/decorator/skip-permission.decorator';
+import { AuthenticateRequest } from 'src/common/types/authenticate-request.type';
+
+
 
 @ApiTags('Rooms')
 @Controller('rooms')
 export class RoomController {
   constructor(private readonly roomService: RoomService) { }
 
-  @Get('/')
+  @Get()
   @Public()
   @SuccessMessage('Lấy danh sách phòng thành công')
   @ApiQuery({ name: 'page', type: Number, required: false, description: 'Số trang' })
   @ApiQuery({ name: 'pageSize', type: Number, required: false, description: 'Số item mỗi trang' })
-  @ApiOperation({ summary: 'Lấy danh sách tất cả phòng' })
+  @ApiOperation({ summary: 'Lấy danh sách tất cả phòng (chỉ phân trang)' })
   findAll(
     @Query('page')
     page: string,
@@ -29,24 +33,45 @@ export class RoomController {
     return this.roomService.findAll(page, pageSize);
   }
 
-
-  @Get('phan-trang-tim-kiem')
+  @Get('pagination-search')
   @Public()
-  @SuccessMessage('Lấy danh sách phòng thành công')
-  @ApiOperation({ summary: 'Lấy danh sách tất cả phòng với phân trang & tìm kiếm' })
-  findWithPaginationAndSearch(
-    @Query('page')
-    page: string,
-    @Query('pageSize')
-    pageSize: string,
-    @Query('search')
-    search: string
+  @SuccessMessage('Lấy danh sách phòng với phân trang và tìm kiếm thành công')
+  @ApiOperation({ summary: 'Lấy danh sách phòng với phân trang và tìm kiếm' })
+  @ApiQuery({ name: 'page', type: Number, required: false, description: 'Số trang' })
+  @ApiQuery({ name: 'pageSize', type: Number, required: false, description: 'Số item mỗi trang' })
+  @ApiQuery({ name: 'search', type: String, required: false, description: 'Tìm kiếm theo tên phòng hoặc mô tả' })
+  @ApiQuery({ name: 'locationId', type: Number, required: false, description: 'Lọc theo vị trí' })
+  @ApiQuery({ name: 'minPrice', type: Number, required: false, description: 'Giá tối thiểu' })
+  @ApiQuery({ name: 'maxPrice', type: Number, required: false, description: 'Giá tối đa' })
+  @ApiQuery({ name: 'guestCount', type: Number, required: false, description: 'Số lượng khách' })
+  getRoomsWithPaginationAndSearch(
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '10',
+    @Query('search') search?: string,
+    @Query('locationId') locationId?: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+    @Query('guestCount') guestCount?: string
   ) {
-    return this.roomService.findWithPaginationAndSearch(page, pageSize, search);
+    return this.roomService.getRoomsWithPaginationAndSearch(
+      page,
+      pageSize,
+      search,
+      locationId ? parseInt(locationId) : undefined,
+      minPrice ? parseFloat(minPrice) : undefined,
+      maxPrice ? parseFloat(maxPrice) : undefined,
+      guestCount ? parseInt(guestCount) : undefined
+    );
   }
 
-  @Get('lay-phong-theo-vi-tri')
-  @SkipPermission()
+
+
+
+
+
+
+  @Get('by-location')
+  @Public()
   @SuccessMessage('Lấy danh sách phòng theo vị trí thành công')
   @ApiOperation({ summary: 'Lấy danh sách phòng theo vị trí' })
   findRoomByLocation(
@@ -58,16 +83,17 @@ export class RoomController {
 
   @Post()
   @SkipPermission()
+  @ApiBearerAuth()
   @UseInterceptors(
     FilesInterceptor('imageRoom', 5, {
       limits: {
-        fileSize: 10 * 1024 * 1024, // 10MB per file
-        files: 5, // Maximum 5 files
+        fileSize: 1 * 1024 * 1024,
+        files: 5,
       },
     })
   )
   @SuccessMessage('Tạo phòng thành công')
-  @ApiOperation({ summary: 'Tạo mới phòng' })
+  @ApiOperation({ summary: 'Tạo mới phòng - User sẽ tự động được upgrade thành Host' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -99,33 +125,80 @@ export class RoomController {
       required: ['name', 'guestCount', 'bedroomCount', 'bedCount', 'bathroomCount', 'price', 'locationId'],
     },
   })
-  @SkipPermission()
   @ApiBearerAuth()
   create(
     @Body() createRoomDto: CreateRoomDto,
     @UploadedFiles() files: Express.Multer.File[],
-    @Req() req: Request
+    @Req() req: AuthenticateRequest
   ) {
-    const userId = req['user']?.id
-    return this.roomService.create(createRoomDto, files, userId);
+
+
+    return this.roomService.create(createRoomDto, files, req.user.id);
   }
 
   @Get(':id')
-  @Public()
   @SuccessMessage('Tìm phòng thuê theo ID thành công')
   @ApiOperation({ summary: 'Tìm phòng thuê theo ID' })
   findOne(@Param('id') id: string) {
     return this.roomService.findOne(id);
   }
 
-  @Patch(':id')
+  // Host update phòng của mình
+  @Patch('my/:id')
   @SkipPermission()
+  @ApiBearerAuth()
   @SuccessMessage('Cập nhật phòng thành công')
-  @ApiOperation({ summary: 'Cập nhật thông tin phòng' })
+  @ApiOperation({ summary: 'Cập nhật phòng của tôi - Host only' })
   @UseInterceptors(FilesInterceptor('imageRoom', 5, {
     limits: {
-      fileSize: 10 * 1024 * 1024, // 10MB per file
-      files: 5, // Maximum 5 files
+      fileSize: 10 * 1024 * 1024,
+      files: 5,
+    },
+  }))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        guestCount: { type: 'number' },
+        bedroomCount: { type: 'number' },
+        bedCount: { type: 'number' },
+        bathroomCount: { type: 'number' },
+        description: { type: 'string' },
+        price: { type: 'number' },
+        locationId: { type: 'number' },
+        washingMachine: { type: 'boolean' },
+        iron: { type: 'boolean' },
+        tv: { type: 'boolean' },
+        airConditioner: { type: 'boolean' },
+        wifi: { type: 'boolean' },
+        kitchen: { type: 'boolean' },
+        parking: { type: 'boolean' },
+        pool: { type: 'boolean' },
+        ironingBoard: { type: 'boolean' },
+        imageRoom: { type: 'array', items: { type: 'string', format: 'binary' } }
+      }
+    }
+  })
+  async updateMyRoom(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() updateRoomDto: UpdateRoomDto,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: AuthenticateRequest
+  ) {
+    return this.roomService.update(id, updateRoomDto, files, req.user.id);
+  }
+
+  // Admin update bất kỳ phòng nào
+  @Patch(':id')
+  @ApiBearerAuth()
+  @SuccessMessage('Cập nhật phòng thành công')
+  @ApiOperation({ summary: 'Cập nhật thông tin phòng - Admin only' })
+  @UseInterceptors(FilesInterceptor('imageRoom', 5, {
+    limits: {
+      fileSize: 10 * 1024 * 1024,
+      files: 5,
     },
   }))
   @ApiConsumes('multipart/form-data')
@@ -162,18 +235,17 @@ export class RoomController {
   update(
     @Param('id') id: string,
     @Body() updateRoomDto: UpdateRoomDto,
+    @Req() req: AuthenticateRequest,
     @UploadedFiles() files?: Express.Multer.File[]
-
   ) {
-    return this.roomService.update(id, updateRoomDto, files);
+    return this.roomService.update(id, updateRoomDto, files, req.user.id);
   }
 
   @Delete(':id')
-  @SkipPermission()
   @SuccessMessage('Xóa phòng thành công')
-  @ApiOperation({ summary: 'Xóa phòng (soft delete)' })
+  @ApiOperation({ summary: 'Xóa phòng (soft delete) - Admin hoặc Host' })
   @ApiBearerAuth()
-  softDelete(@Param('id') id: string) {
-    return this.roomService.softDelete(id);
+  softDelete(@Param('id') id: string, @Req() req: AuthenticateRequest) {
+    return this.roomService.softDelete(id, req.user.id);
   }
 }

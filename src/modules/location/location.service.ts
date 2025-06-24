@@ -5,23 +5,21 @@ import { destroyCloudinaryImage, uploadImageBuffer } from 'src/common/utils/clou
 import { getSafeData } from 'src/common/utils/safe-data.util';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { getPaginationParams, buildPaginationResult, PaginationResult } from 'src/common/utils/pagination.util';
 
 @Injectable()
 export class LocationService {
   constructor(private readonly prismaService: PrismaService) { }
 
-  async findAll(page: string | number, pageSize: string | number) {
-    page = Number(page) > 0 ? Number(page) : 1;
-    pageSize = Number(pageSize) > 0 ? Number(pageSize) : 5;
-
-    const skip = (page - 1) * pageSize;
-
+  async findAll(page: string | number, pageSize: string | number): Promise<PaginationResult<any>> {
+    const params = getPaginationParams(page, pageSize, 5);
     const where = { isDeleted: false };
+
     const [locations, totalItems] = await Promise.all([
       this.prismaService.locations.findMany({
         where,
-        take: pageSize,
-        skip,
+        take: params.pageSize,
+        skip: params.skip,
         orderBy: {
           createdAt: 'desc',
         },
@@ -29,63 +27,37 @@ export class LocationService {
       this.prismaService.locations.count({ where }),
     ]);
 
-    const safeLocations = getSafeData(locations)
-
-    const totalPages = Math.ceil(totalItems / pageSize);
-
-    return {
-      items: safeLocations,
-      pagination: {
-        currentPage: page,
-        itemsPerPage: pageSize,
-        totalItems,
-        totalPages,
-      },
-    };
+    const safeLocations = getSafeData(locations);
+    return buildPaginationResult(safeLocations, totalItems, params, 'Hiện tại chưa có vị trí nào');
   }
 
-  async findWWithPaginationAndSearch(page: string | number, pageSize: string | number, search: string) {
-    page = Number(page) > 0 ? Number(page) : 1;
-    pageSize = Number(pageSize) > 0 ? Number(pageSize) : 5;
-    search = search || "";
-
-    const skip = (page - 1) * pageSize;
+  async findWWithPaginationAndSearch(page: string | number, pageSize: string | number, search: string): Promise<PaginationResult<any>> {
+    const params = getPaginationParams(page, pageSize, 5);
+    const searchTerm = search || "";
 
     const where = {
       isDeleted: false,
       OR: [
-        { name: { contains: search } },
-        { province: { contains: search } },
-        { country: { contains: search } },
+        { name: { contains: searchTerm } },
+        { province: { contains: searchTerm } },
+        { country: { contains: searchTerm } },
       ]
-
     };
 
     const [locations, totalItems] = await Promise.all([
       this.prismaService.locations.findMany({
-        where: where,
-        take: pageSize,
-        skip: skip,
+        where,
+        take: params.pageSize,
+        skip: params.skip,
         orderBy: {
           createdAt: 'desc'
         },
       }),
-      this.prismaService.locations.count({ where: where }),
+      this.prismaService.locations.count({ where }),
     ]);
 
-    const safeLocations = getSafeData(locations)
-
-    const totalPages = Math.ceil(totalItems / pageSize);
-
-    return {
-      items: safeLocations,
-      pagination: {
-        currentPage: page,
-        itemsPerPage: pageSize,
-        totalItems: totalItems,
-        totalPages: totalPages,
-      },
-    };
+    const safeLocations = getSafeData(locations);
+    return buildPaginationResult(safeLocations, totalItems, params, 'Không tìm thấy vị trí nào phù hợp');
   }
 
   async findOne(id: string) {

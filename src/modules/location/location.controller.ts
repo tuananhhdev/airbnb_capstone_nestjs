@@ -5,6 +5,7 @@ import { UpdateLocationDto } from './dto/update-location.dto';
 import { SuccessMessage } from 'src/common/decorator/success-mesage.decorator';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Public } from 'src/common/decorator/public.decorator';
 
 @ApiTags('Locations')
 @Controller('locations')
@@ -12,8 +13,9 @@ export class LocationController {
   constructor(private readonly locationService: LocationService) { }
 
   @Get()
+  @Public()
   @SuccessMessage('Lấy danh sách vị trí thành công')
-  @ApiOperation({ summary: 'Lấy danh sách tất cả vị trí ' })
+  @ApiOperation({ summary: 'Lấy danh sách tất cả vị trí' })
   findAll(
     @Query('page')
     page: string,
@@ -23,9 +25,10 @@ export class LocationController {
     return this.locationService.findAll(page, pageSize);
   }
 
-  @Get('phan-trang-tim-kiem')
+  @Get('pagination-search')
+  @Public()
   @SuccessMessage('Lấy danh sách vị trí thành công')
-  @ApiOperation({ summary: 'Lấy danh sách tất cả vị trí với phần trang & tìm kiếm ' })
+  @ApiOperation({ summary: 'Lấy danh sách tất cả vị trí với phần trang & tìm kiếm' })
   findWithPaginationAndSearch(
     @Query('page')
     page: string,
@@ -40,7 +43,7 @@ export class LocationController {
   @Post()
   @ApiBearerAuth()
   @SuccessMessage('Tạo mới vị trí thành công')
-  @ApiOperation({ summary: 'Tạo mới vị trí' })
+  @ApiOperation({ summary: 'Tạo mới vị trí - Admin only' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -56,7 +59,7 @@ export class LocationController {
   @UseInterceptors(
     FileInterceptor('imageLocation', {
       limits: {
-        fileSize: 1 * 1024 * 1024, 
+        fileSize: 1 * 1024 * 1024,
       },
     }),
   )
@@ -68,6 +71,7 @@ export class LocationController {
   }
 
   @Get(':id')
+  @Public()
   @SuccessMessage('Tìm vị trí theo theo ID thành công')
   @ApiOperation({ summary: 'Tìm vị trí theo theo ID' })
   findOne(@Param('id') id: string) {
@@ -75,11 +79,11 @@ export class LocationController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
   @SuccessMessage('Cập nhật vị trí thành công')
-  @ApiOperation({ summary: 'Cập nhật vị trí' })
+  @ApiOperation({ summary: 'Cập nhật vị trí - Admin only' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateLocationDto })
-  @ApiBearerAuth()
   @ApiBody({
     schema: {
       type: 'object',
@@ -94,7 +98,7 @@ export class LocationController {
   @UseInterceptors(
     FileInterceptor('imageLocation', {
       limits: {
-        fileSize: 1 * 1024 * 1024, 
+        fileSize: 1 * 1024 * 1024,
       },
     }),
   )
@@ -109,7 +113,7 @@ export class LocationController {
   @Delete(':id')
   @ApiBearerAuth()
   @SuccessMessage('Xóa vị trí thành công')
-  @ApiOperation({ summary: 'Xóa vị trí (soft delete)' })
+  @ApiOperation({ summary: 'Xóa vị trí (soft delete) - Admin only' })
   @ApiResponse({
     status: 200,
     description: 'Xóa vị trí thành công',

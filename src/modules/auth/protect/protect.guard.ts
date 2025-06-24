@@ -29,8 +29,12 @@ export class ProtectGuard extends AuthGuard('protect') {
         return super.canActivate(context);
     }
 
-    handleRequest(err, user, info) {
-        console.log({ err, user, info });
+    handleRequest(err: any, user: any, info: any) {
+        console.log('🛡️ ProtectGuard :: handleRequest:', {
+            err: err?.message,
+            user: user ? { id: user.id, roleId: user.roleId } : null,
+            info: info?.message
+        });
 
         if (err || !user) {
             if (info instanceof TokenExpiredError) {
