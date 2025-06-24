@@ -69,7 +69,7 @@ export class AuthService {
                 ignoreExpiration: true,
             });
         } catch (error) {
-            throw new BadRequestException("Refresh token hợp lệ, vui lòng đăng ký tài khoản mới")
+            throw new BadRequestException("Refresh token không hợp lệ hoặc đã hết hạn, vui lòng đăng nhập lại")
         }
 
         if (decodeRefreshToken.sub !== decodeAccessToken.sub) {

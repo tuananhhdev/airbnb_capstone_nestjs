@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME } from 'src/common/constant/app.constant';
 import { PrismaService } from '../prisma/prisma.service';
@@ -342,6 +342,7 @@ export class UserService {
     }
 
     async uploadAvatar(userId: number, avatar: Express.Multer.File) {
+
         const existingUser = await this.prismaService.users.findUnique({
             where: { id: userId, isDeleted: false }
         });
@@ -396,16 +397,58 @@ export class UserService {
         };
     }
 
-    async softDelete(id: number) {
-        const userExist = await this.prismaService.users.findUnique({ where: { id: id, isDeleted: false } });
+    async softDelete(id: number, deletedBy: number) {
+        const userExist = await this.prismaService.users.findUnique({
+            where: { id: id, isDeleted: false },
+            select: {
+                id: true,
+                fullName: true,
+                email: true,
+                roleId: true,
+                avatar: true
+            }
+        });
+
         if (!userExist) throw new BadRequestException(`Không tìm thấy người dùng`);
 
-        await this.prismaService.users.update({
-            where: { id: id },
-            data: { isDeleted: true }
-        })
+        // Không cho phép xóa admin
+        if (userExist.roleId === 1) {
+            throw new BadRequestException('Không thể xóa tài khoản admin');
+        }
 
-        return { message: 'Xóa người dùng thành công' }
+        const deletedUser = await this.prismaService.users.update({
+            where: { id: id },
+            data: {
+                isDeleted: true,
+                deletedAt: new Date(),
+                deletedBy: deletedBy
+            },
+            select: {
+                id: true,
+                fullName: true,
+                email: true,
+                deletedAt: true
+            }
+        });
+
+        // Lấy thông tin người thực hiện xóa
+        const deletedByUser = await this.prismaService.users.findUnique({
+            where: { id: deletedBy },
+            select: { fullName: true, Roles: { select: { name: true } } }
+        });
+
+        // Return theo chuẩn book-room
+        return {
+            message: `Đã xóa người dùng "${deletedUser.fullName}" thành công`,
+            deletedUser: {
+                id: deletedUser.id,
+                fullName: deletedUser.fullName,
+                email: deletedUser.email,
+                deletedAt: deletedUser.deletedAt,
+                deletedBy: deletedByUser?.fullName || 'Không xác định',
+                deletedByRole: deletedByUser?.Roles?.name || 'Không xác định'
+            }
+        };
     }
 
 

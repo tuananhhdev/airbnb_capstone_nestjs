@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-custom';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
@@ -13,7 +13,7 @@ export class PermissionStrategy extends PassportStrategy(Strategy, 'permission')
         const user = req.user;
         console.log('🔑 PermissionStrategy :: validate - req.user:', user ? { id: user.id, roleId: user.roleId } : null);
 
-        if (!user) throw new BadRequestException('Không tìm thấy thông tin người dùng');
+        if (!user) throw new ForbiddenException('Không tìm thấy thông tin người dùng');
 
         const { roleId } = user;
         const endpoint = req?._parsedUrl?.pathname;
@@ -51,7 +51,7 @@ export class PermissionStrategy extends PassportStrategy(Strategy, 'permission')
         });
 
         if (!hasPermission) {
-            throw new BadRequestException('Bạn không có quyền thực hiện hành động này. Vui lòng liên hệ quản trị viên để được hỗ trợ.');
+            throw new ForbiddenException('Bạn không có quyền thực hiện hành động này. Vui lòng liên hệ quản trị viên để được hỗ trợ.');
         }
 
         console.log('✅ PermissionStrategy :: Endpoint permissions passed - returning user');
@@ -68,7 +68,7 @@ export class PermissionStrategy extends PassportStrategy(Strategy, 'permission')
         });
 
         if (count === 0) {
-            throw new BadRequestException(this.getPermissionMessage(requiredPermissions));
+            throw new ForbiddenException(this.getPermissionMessage(requiredPermissions));
         }
     }
 

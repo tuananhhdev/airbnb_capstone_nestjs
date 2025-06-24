@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsEmail, IsBoolean, IsOptional, IsNotEmpty, IsInt } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
   @ApiProperty({ description: 'Họ và tên', example: 'Nguyen Van A', required: true })
@@ -32,9 +33,14 @@ export class CreateUserDto {
   @IsString({ message: 'Ảnh đại diện phải là chuỗi' })
   avatar?: string;
 
-  @ApiProperty({ description: 'Giới tính', example: true, required: false })
+  @ApiProperty({ description: 'Giới tính (true=nam, false=nữ)', example: true, required: false })
   @IsOptional()
-  @IsBoolean({ message: 'Giới tính phải là boolean' })
+  @Transform(({ value }) => {
+    if (value === 'true' || value === true || value === '1' || value === 1) return true;
+    if (value === 'false' || value === false || value === '0' || value === 0) return false;
+    return value;
+  })
+  @IsBoolean({ message: 'Giới tính phải là boolean (true/false, 1/0)' })
   gender?: boolean;
 
   @ApiProperty({ description: 'ID vai trò', example: 2, default: 2, required: false })

@@ -162,8 +162,8 @@ export class CommentService {
         const comment = await this.prismaService.comments.findUnique({
             where: { id, isDeleted: false },
             include: {
-                Users_Comments_commenterIdToUsers: { select: { fullName: true } },
-                Rooms: { select: { name: true } }
+                Users_Comments_commenterIdToUsers: { select: { id: true, fullName: true } },
+                Rooms: { select: { id: true, name: true } }
             }
         });
 
@@ -174,18 +174,47 @@ export class CommentService {
         // Kiểm tra quyền: Admin hoặc chủ sở hữu comment
         await this.checkCommentPermission(userId, comment.commenterId, 'xóa');
 
+        // Lấy thông tin user thực hiện xóa
+        const deletedByUser = await this.prismaService.users.findUnique({
+            where: { id: userId },
+            select: { fullName: true, Roles: { select: { name: true } } }
+        });
+
         // Soft delete
-        await this.prismaService.comments.update({
+        const deletedComment = await this.prismaService.comments.update({
             where: { id },
             data: {
                 isDeleted: true,
                 deletedAt: new Date(),
                 deletedBy: userId
+            },
+            select: {
+                id: true,
+                content: true,
+                rating: true,
+                deletedAt: true
             }
         });
 
+        const isAdmin = deletedByUser?.Roles?.name === 'ADMIN';
+        const commenterName = comment.Users_Comments_commenterIdToUsers.fullName;
+        const roomName = comment.Rooms.name;
+
         return {
-            message: `Đã xóa bình luận của ${comment.Users_Comments_commenterIdToUsers.fullName} về phòng "${comment.Rooms.name}" thành công`
+            message: `Đã xóa bình luận của ${commenterName} về phòng "${roomName}" thành công`,
+            deletedComment: {
+                commentId: deletedComment.id,
+                content: deletedComment.content,
+                rating: deletedComment.rating,
+                commenter: commenterName,
+                room: {
+                    id: comment.Rooms.id,
+                    name: roomName
+                },
+                deletedAt: deletedComment.deletedAt,
+                deletedBy: deletedByUser?.fullName || 'Không xác định',
+                deletedByRole: isAdmin ? 'Admin' : 'Chủ bình luận'
+            }
         };
     }
 

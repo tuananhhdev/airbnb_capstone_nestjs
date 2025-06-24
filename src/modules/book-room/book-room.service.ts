@@ -356,7 +356,7 @@ export class BookRoomService {
         const isOwner = booking.userId === userId;
 
         if (!isAdmin && !isOwner) {
-            throw new BadRequestException('Bạn không có quyền xem chi tiết đặt phòng này');
+            throw new ForbiddenException('Bạn không có quyền xem chi tiết đặt phòng này');
         }
 
         const checkIn = new Date(booking.checkInDate);
@@ -508,7 +508,7 @@ export class BookRoomService {
         });
 
         if (!admin || admin.Roles.name !== 'ADMIN' && userId === 2) {
-            throw new BadRequestException('Chỉ admin mới có quyền xem đặt phòng của người dùng khác');
+            throw new ForbiddenException('Chỉ admin mới có quyền xem đặt phòng của người dùng khác');
         }
         const params = getPaginationParams(page, pageSize);
 

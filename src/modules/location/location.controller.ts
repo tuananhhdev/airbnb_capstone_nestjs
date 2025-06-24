@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, UploadedFile, Req } from '@nestjs/common';
 import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
@@ -6,6 +6,7 @@ import { SuccessMessage } from 'src/common/decorator/success-mesage.decorator';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/common/decorator/public.decorator';
+import { AuthenticateRequest } from 'src/common/types/authenticate-request.type';
 
 @ApiTags('Locations')
 @Controller('locations')
@@ -124,8 +125,8 @@ export class LocationController {
       }
     }
   })
-  softDelete(@Param('id') id: string) {
-    return this.locationService.softDeleteLocation(id);
+  softDelete(@Param('id') id: string, @Req() req: AuthenticateRequest) {
+    return this.locationService.softDeleteLocation(id, req.user.id);
   }
 
 }

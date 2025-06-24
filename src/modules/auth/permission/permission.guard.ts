@@ -1,9 +1,7 @@
 import {
-    BadRequestException,
     ExecutionContext,
     ForbiddenException,
     Injectable,
-    UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
@@ -52,7 +50,7 @@ export class PermissionGuard extends AuthGuard('permission') {
         });
 
         if (err || !user) {
-            throw err || new BadRequestException(info?.message || 'Không có quyền truy cập');
+            throw err || new ForbiddenException(info?.message || 'Không có quyền truy cập');
         }
         return user;
     }

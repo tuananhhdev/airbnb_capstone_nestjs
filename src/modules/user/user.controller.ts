@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
@@ -225,10 +225,10 @@ class UserController {
   @ApiOperation({ summary: 'Xóa người dùng theo ID - Admin only' })
   @SuccessMessage('Xóa người dùng thành công')
   softDelete(
-    @Param('id')
-    id: string
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: AuthenticateRequest
   ) {
-    return this.userService.softDelete(Number(id));
+    return this.userService.softDelete(id, req.user.id);
   }
 
 }

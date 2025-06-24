@@ -152,15 +152,23 @@ export class LocationService {
   }
 
 
-  async softDeleteLocation(id: string) {
+  async softDeleteLocation(id: string, userId: number) {
     const location = await this.prismaService.locations.findUnique({
-      where: { id: Number(id), isDeleted: false }
+      where: { id: Number(id), isDeleted: false },
+      select: {
+        id: true,
+        name: true,
+        province: true,
+        country: true,
+        image: true
+      }
     });
 
     if (!location) {
       throw new BadRequestException('Không tìm thấy vị trí với ID này');
     }
 
+    // Xóa ảnh trên Cloudinary nếu có
     if (location.image) {
       try {
         await destroyCloudinaryImage(location.image);
@@ -169,15 +177,43 @@ export class LocationService {
       }
     }
 
-    await this.prismaService.locations.update({
+    // Soft delete
+    const deletedLocation = await this.prismaService.locations.update({
       where: { id: Number(id) },
       data: {
         isDeleted: true,
+        deletedAt: new Date(),
+        deletedBy: userId,
         updatedAt: new Date(),
       },
+      select: {
+        id: true,
+        name: true,
+        province: true,
+        country: true,
+        deletedAt: true
+      }
     });
 
-    return { message: 'Xóa vị trí thành công' };
+    // Lấy thông tin người thực hiện xóa
+    const deletedByUser = await this.prismaService.users.findUnique({
+      where: { id: userId },
+      select: { fullName: true, Roles: { select: { name: true } } }
+    });
+
+    return {
+      message: `Đã xóa vị trí "${location.name}, ${location.province}" thành công`,
+      deletedLocation: {
+        id: deletedLocation.id,
+        name: deletedLocation.name,
+        province: deletedLocation.province,
+        country: deletedLocation.country,
+        deletedAt: deletedLocation.deletedAt,
+        deletedBy: deletedByUser?.fullName || 'Không xác định',
+        deletedByRole: deletedByUser?.Roles?.name || 'Không xác định',
+        imageRemoved: !!location.image
+      }
+    };
   }
 
 

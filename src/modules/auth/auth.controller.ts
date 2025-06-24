@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { Public } from 'src/common/decorator/public.decorator';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RegisterAuthDto } from './dto/register-auth.dto';
 import { RefreshTokenAuthDto } from './dto/refresh-token-auth.dto';
 import { SuccessMessage } from 'src/common/decorator/success-mesage.decorator';
@@ -29,10 +29,10 @@ export class AuthController {
   }
 
 
+  @Public()
   @Post('refresh-token')
   @SuccessMessage('Làm mới token thành công')
-  @ApiOperation({ summary: 'Làm mới token' })
-  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Làm mới token bị hết hạn' })
   refreshToken(@Body() refreshTokenAuthDto: RefreshTokenAuthDto) {
     return this.authService.refreshToken(refreshTokenAuthDto);
   }
