@@ -54,7 +54,7 @@ Hệ thống cho thuê nhà nghỉ dưỡng đầy đủ tính năng hỗ trợ 
 ### Yêu cầu hệ thống
 - Node.js 18+
 - MySQL 8.0+
-- npm hoặc yarn
+- yarn
 
 ### Cài đặt
 
@@ -64,16 +64,15 @@ git clone <repository-url>
 cd airbnb_capstone
 
 # Cài đặt dependencies
-npm install
+yarn install
 
 # Thiết lập môi trường
-cp .env.example .env
+cp .env
 # Cấu hình file .env của bạn
 
-# Thiết lập cơ sở dữ liệu
+# Cấu hình Prisma
+npx prisma db pull
 npx prisma generate
-npx prisma migrate dev
-npx prisma db seed
 
 # Chạy server phát triển
 npm run start:dev
@@ -82,7 +81,7 @@ npm run start:dev
 ### Cấu hình môi trường
 
 ```env
-DATABASE_URL="mysql://username:password@localhost:3306/airbnb_db"
+DATABASE_URL="mysql://username:password@localhost:3307/airbnb_db"
 
 ACCESS_TOKEN_SECRET="your-access-token-secret"
 ACCESS_TOKEN_EXPIRES="15m"
@@ -169,7 +168,7 @@ src/
 ├── modules/
 │   ├── auth/           # Xác thực & phân quyền
 │   ├── user/           # Quản lý người dùng
-│   ├── room/           # Quản lý bất động sản
+│   ├── room/           # Quản lý phòng
 │   ├── location/       # Dịch vụ vị trí
 │   ├── book-room/      # Hệ thống đặt phòng
 │   ├── comment/        # Hệ thống đánh giá
@@ -183,7 +182,7 @@ src/
 |---------|----|-----------| 
 | **Admin** | 1 | Truy cập toàn hệ thống, quản lý người dùng |
 | **User** | 2 | Đặt phòng, đánh giá, quản lý hồ sơ |
-| **Host** | 3 | Quản lý bất động sản, xác nhận đặt phòng |
+| **Host** | 3 | Quản lý phòng, xác nhận đặt phòng |
 
 ---
 
@@ -192,42 +191,26 @@ src/
 ### Tài khoản test
 ```json
 {
-  "admin": { "email": "admin@airbnb.com", "password": "admin123" },
-  "host": { "email": "host@airbnb.com", "password": "host123" },
-  "user": { "email": "user@airbnb.com", "password": "user123" }
+  "admin": { "email": "tuananh@gmail.com", "password": "Tuananh120?" },
+  "host": { "email": "trandung@gmail.com", "password": "Trandung20?" },
+  "user": { "email": "kimdung@gmail.com", "password": "Kimdung20?" }
 }
 ```
 
 ### Postman Collection
-Import `postman/Airbnb_Capstone.postman_collection.json` để kiểm thử API toàn diện.
+Import `postman/AIRBNB_CAPSTONE_NESTJS.postman_collection.json` để kiểm thử API toàn diện.
 
 ---
 
 ## Scripts phát triển
 
 ```bash
-npm run start:dev      # Server phát triển với hot reload
-npm run build          # Build production
-npm run start:prod     # Server production
-npm run lint           # Kiểm tra code
-npm run format         # Định dạng code
+yarn start:dev      # Server phát triển với hot reload
+yarn build          # Build production
+yarn start:prod     # Server production
+yarn lint           # Kiểm tra code
+yarn format         # Định dạng code
 ```
-
----
-
-## Đóng góp
-
-1. Fork repository
-2. Tạo feature branch (`git checkout -b feature/TinhNangMoi`)
-3. Commit thay đổi (`git commit -m 'Thêm TinhNangMoi'`)
-4. Push lên branch (`git push origin feature/TinhNangMoi`)
-5. Mở Pull Request
-
----
-
-## Giấy phép
-
-Dự án này được cấp phép theo Giấy phép MIT - xem file [LICENSE](LICENSE) để biết chi tiết.
 
 ---
 
