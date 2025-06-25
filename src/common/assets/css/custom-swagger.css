@@ -55,3 +55,76 @@
   color: #37474f;
   font-weight: bold;
 }
+
+/* Tùy chỉnh thêm giao diện chung */
+.swagger-ui .topbar {
+  background-color: #123456;
+  color: #fff;
+}
+
+.swagger-ui .topbar a {
+  color: #e0f7fa;
+}
+
+.swagger-ui .info .title {
+  color: #123456;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.swagger-ui .opblock .opblock-summary-operation-id,
+.swagger-ui .opblock .opblock-summary-path {
+  color: #0288d1;
+}
+
+.swagger-ui .opblock.opblock-get {
+  border-color: #4caf50;
+  background-color: #e8f5e9;
+}
+
+.swagger-ui .opblock.opblock-post {
+  border-color: #0288d1;
+  background-color: #e3f2fd;
+}
+
+.swagger-ui .opblock.opblock-put {
+  border-color: #f57c00;
+  background-color: #fff3e0;
+}
+
+.swagger-ui .opblock.opblock-delete {
+  border-color: #d32f2f;
+  background-color: #ffebee;
+}
+
+/* Theme hỗ trợ dark mode */
+[data-theme="dark"] .swagger-ui {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .swagger-ui .topbar {
+  background-color: #2c3e50;
+}
+
+[data-theme="dark"] .swagger-ui .info .title {
+  color: #4fc3f7;
+}
+
+[data-theme="dark"] .swagger-ui .auth-wrapper {
+  background-color: #263238;
+  border-bottom: 1px solid #455a64;
+}
+
+[data-theme="dark"] .swagger-ui .modal-ux {
+  border-color: #4fc3f7;
+  background-color: #263238;
+}
+
+[data-theme="dark"] .swagger-ui .modal-ux-content h2 {
+  color: #4fc3f7;
+}
+
+[data-theme="dark"] .swagger-ui .auth-container label {
+  color: #b0bec5;
+}

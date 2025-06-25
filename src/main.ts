@@ -35,7 +35,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
-    ignoreGlobalPrefix: false
+    ignoreGlobalPrefix: false,
   });
 
   // Loại bỏ route /api nếu xuất hiện
@@ -43,8 +43,8 @@ async function bootstrap() {
     delete document.paths['/api'];
   }
 
-  const customCssPath = path.join(__dirname, '..', 'src', 'common', 'assets', 'css', 'custom-swagger.css'); // Cập nhật đường dẫn CSS
-  const customJsPath = path.join(__dirname, '..', 'src', 'common', 'assets', 'js', 'custom-swagger.js'); // Cập nhật đường dẫn JS
+  const customCssPath = path.join(__dirname, '..', 'src', 'common', 'assets', 'css', 'custom-swagger.css');
+  const customJsPath = path.join(__dirname, '..', 'src', 'common', 'assets', 'js', 'custom-swagger.js');
   const customCss = fs.readFileSync(customCssPath, 'utf8');
   const customJs = fs.readFileSync(customJsPath, 'utf8');
 
@@ -61,7 +61,7 @@ async function bootstrap() {
     },
     customSiteTitle: 'Airbnb Capstone API - Professional Documentation',
     customCss,
-    // customJs,
+    customJs,
   });
 
   await app.listen(PORT ?? 3069);
